@@ -1,0 +1,16 @@
+Job Name: Fibronectin_Fn3HP
+FASTA/FASTQ File: High_affinity.fasta
+Gene Start: TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG
+5' Anchor: GCTAGC
+3' Anchor: GGATCC
+# of Diversified Regions: 3
+DNA After Region: TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG,GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA,CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG
+Minimum Region Length: 6,3,6
+Maximum Region Length: 10,6,12
+Insert after # Position: 3,2,3
+Sequence Similarity Threshold: 0.8
+Frequency Dampening Power: 0.5
+Maximum Sequence Count: 10000
+Assay Background Filter: On
+Pairwise Analysis: On
+Filter Coefficient: 10
