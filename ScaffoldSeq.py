@@ -1,33 +1,11 @@
 """
 ScaffoldSeq: Software for characterization of directed evolution populations
 University of Minnesota
-Authors:
-    Daniel R. Woldring
-    Patrick V. Holec
-    Bejnamin J. Hackel
-
-April 5, 2016
-
-Updated:
-    Adam T. McConnell - May 13, 2019
+__author__ = "Daniel R. Woldring, Patrick V. Holec, and Bejnamin J. Hackel"
+__version__ = 1.9
+__status__ = "Research and Development"
+__maintainer__ = "Adam T. McConnell"
 """
-
-'''
-Default Library Loading
-Purpose: Load all libraries (most should be default)
-'''
-
-# TODO: clean up unnecessary import modules
-# TODO: clean up documentation
-# TODO: clean up docstrings
-# TODO: separate out
-# from sys import argv
-# from collections import deque
-# import string
-# import time
-# from collections import OrderedDict
-# import json
-# import itertools
 import csv
 import datetime
 import difflib
@@ -42,13 +20,22 @@ import sys  # os, re
 import textwrap
 import time
 
+# TODO: clean up unnecessary import modules
+# TODO: clean up documentation
+# TODO: clean up docstrings
+# TODO: separate out GUI from algorithm
+# TODO: rewrite algorithm in the form of a class?
+# TODO: profile code for performance evaluation
+# TODO: if this is to be scalable, will need to use generators rather than returning lists
+# TODO: test everything with UnitTest
+# TODO: replacing all xrange with range. Might need to use generators to yield later
+# TODO: Remove found var in all areas of this code
+# TODO: update any open() statements into with open() as f statements
+
 
 if system() != 'Windows':
     #  termios is Unix specific. It does not exist for Windows platforms
-        import sys, tty, termios
-
-# TODO: Remove found var in all areas of this code
-found = True  # Temporary placeholder.
+    import sys, tty, termios
 
 '''
 Define Global Variables
@@ -58,48 +45,24 @@ Note:
 global aa, system_name, adaptor_tolerance, framework_match_threshold
 
 # Change this number for the number of mutations you want the adaptor alignment to allow
-# Note: This is typically 0, but we accept there is some experimental error with Illumina Sequencing which we estimate at 0.4% false negatives
+# Note: This is typically 0, but we accept there is some experimental error with Illumina Sequencing which we estimate
+# at 0.4% false negatives
 adaptor_tolerance = 0
 
 # Change this number for the fraction of framework homology that is required to identify a protein from a sequence
-# Note: We recommend 0.7, but this can range based on the extent of diversification introduced outside the intentially diversified regions
+# Note: We recommend 0.7, but this can range based on the extent of diversification introduced outside the intentially
+# diversified regions
 framework_match_threshold = 0.7
 
-aa = 'ACDEFGHIKLMNPQRSTVWY_-'
+aa = "ACDEFGHIKLMNPQRSTVWY_-"
 
 system_name = system()
 
-
-'''
-Silent Start Detector
-Purpose: If a command line argument is provided, the program will run in silence
-Notes:
-'''
-if len(sys.argv) == 1:
-    silent_mode = False
-elif len(sys.argv) == 2:  # Triggers Interface Mode
-    print('Silent mode started. Interactive mode will be circumvented.')
-    if os.path.isfile(sys.argv[1]):
-        job_file = sys.argv[1]
-        silent_mode = True
-    else:
-        print('Job file dictated by command line argument not located. Please check file name.')
-        __getch()
-elif len(sys.argv) > 2:
-    print('Too many input arguments. Please revise command line arguments.')
-    print('Press any key to exit.')
-    input()
-    raise SystemExit
-    
-start = time.time() # Starts timer
-curr_date = datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
-
-
-        ###################################################################
-        ##                                                               ##
-        ##              List of Functions Used within Script             ##
-        ##                                                               ##
-        ###################################################################
+###################################################################
+##                                                               ##
+##              List of Functions Used within Script             ##
+##                                                               ##
+###################################################################
 
 clear = lambda: os.system('cls')
 
@@ -111,12 +74,11 @@ Note: The spacer exists to add dashes at a specific index so frequency analysis 
 '''
 
 
-
 def FullFormat(roughseqs,big_loop,spacer):
     allseqs = []
     for seqs in roughseqs:
         seq = ''
-        for i in xrange(len(seqs)):
+        for i in range(len(seqs)):
             seq += seqs[i][:(len(seqs[i])-spacer[i])] \
                     + '-' * (big_loop[i][1]-len(seqs[i])) \
                     + seqs[i][len(seqs[i]) - spacer[i]:]
@@ -128,6 +90,7 @@ Sequence Analysis (Unique sequence frequency)
 Purpose: Counts the frequency of unique sequences in data
 Note: 
 '''
+
 
 def FullFreq(seqs):
     from collections import Counter
@@ -143,22 +106,23 @@ len(LOOPcnt) = length of diversified region
 loop = (min region length, max region length)
 '''
 
+
 def ResidueFrequency(LOOPseqs, loop):
     memCnt,LOOPcnt,LOOP_fams,LOOP_leads = [],[],0,[]
-    for a in xrange(loop[1]):
+    for a in range(loop[1]):
         LOOPcnt.append([0.]*22)
-    for i in xrange(loop[1]-loop[0]+1):
+    for i in range(loop[1]-loop[0]+1):
         for fam in LOOPseqs[i]:
             if len(fam) > 0:
                 LOOP_fams += 1
                 LOOP_leads.append([fam[0],LOOP_fams])
-            for k in xrange(loop[1]):
+            for k in range(loop[1]):
                 memCnt.append([0.]*22)
             for mem in fam:
-                for j in xrange(loop[1]):
+                for j in range(loop[1]):
                     memCnt[j][ aa.index(mem[0][j])] += mem[1]
             for m in range(loop[1]):
-                for n in xrange(22):
+                for n in range(22):
                     LOOPcnt[m][n] += (memCnt[m][n])**(damp)
             memCnt = []
     return LOOPcnt,LOOP_leads
@@ -171,12 +135,14 @@ Notes:
 len(FULLcnt) = length of diversified region
 loop = (min region length, max region length)
 '''
+
+
 def UniqueFrequency(FULLseqs):
     FULLcnt = []
-    for a in xrange(len(FULLseqs[0][0])):
+    for a in range(len(FULLseqs[0][0])):
         FULLcnt.append([0.]*22)
     for mem in FULLseqs:
-        for j in xrange(len(FULLseqs[0][0])):
+        for j in range(len(FULLseqs[0][0])):
             FULLcnt[j][ aa.index(mem[0][j])] += (mem[1])**damp
     return FULLcnt
 
@@ -191,22 +157,24 @@ Output Structure: 22x22 matrix for each position pair, i and j
     Pair sequence (i,j) ordering: i = {0:(len(protein) - 1)}, j = {(i+1):len(protein)}
 Note: 22 = 20AA + stop + gap
 '''
+
+
 def FullPairwise(seqs,pairBG,damp):
-    
+
     allpair = []
-    
+
     FREQUENCYpairseqs = UniqueFrequency(seqs)
 
     PERCENTpairseqs = [[i/sum(j) for i in j] for j in FREQUENCYpairseqs]
-    
-    for i in xrange(len(seqs[-1][0])-1):
+
+    for i in range(len(seqs[-1][0])-1):
         for j in range(i+1,len(seqs[-1][0])):
-            allpair.append([[0. for ii in xrange(len(aa))] for jj in xrange(len(aa))])
+            allpair.append([[0. for ii in range(len(aa))] for jj in range(len(aa))])
             for seq in seqs:
                 try:
                     if seq[1] > pairBG: allpair[-1][aa.index(seq[0][i])][aa.index(seq[0][j])] += seq[1]**damp
                 except:
-                    print 'Error- skipping sequence...'
+                    print('Error- skipping sequence...')
             totalentries = sum([ii for jj in allpair[-1] for ii in jj])
             allpair[-1] = [[ii/totalentries for ii in jj] for jj in allpair[-1]]
     return allpair, PERCENTpairseqs
@@ -221,17 +189,18 @@ Inputs:         'pairdata'
 
 '''
 
-def FullMatrixCompare(pairdata,freqmatrix):
+
+def FullMatrixCompare(pairdata, freqmatrix):
     #Flatten the lists of each diversified region into one continuous list
     #freqmatrix = [a for b in freqmatrix for a in b]
     ss = len(freqmatrix)
     freqdata,refs,diff = [],[],[]
-    for i in xrange(ss-1):
+    for i in range(ss-1):
         for j in range(i+1,ss):
             freqdata.append([[a*b for b in freqmatrix[j]] for a in freqmatrix[i]])
             refs.append(["'"+'-'*i+'X'+'-'*(j-i-1)+'X'+'-'*(ss-j-1),str(i+1)+" & "+str(j+1)])
     #Comparison between both data sets (pairwise experimental and probability)
-    for p1,p2,ref,i in zip(pairdata,freqdata,refs,xrange(len(pairdata))):
+    for p1,p2,ref,i in zip(pairdata,freqdata,refs,range(len(pairdata))):
         diff.append([ref[0],ref[1],sum([abs(a-b) for a,b in zip([ii for jj in p1 for ii in jj],[iii for jjj in p2 for iii in jjj])])])
     return diff,freqdata,refs
 
@@ -240,8 +209,10 @@ def FullMatrixCompare(pairdata,freqmatrix):
 Purpose: Computes sitewise similarity between the input strings, seq1 and seq2
 '''
 
+
 def FamCrit(seq1, seq2):   # Two input strings and finding ratio of difference
     return difflib.SequenceMatcher(a=seq1.lower(), b=seq2.lower()).ratio()
+
 
 def find(lst, predicate):   # 
     return (i for i, j in enumerate(lst) if predicate(j)).next()
@@ -251,12 +222,14 @@ Data Output (Basic CSV Display)
 Purpose: Bare minimum data output using only default Python libraries
 Note: 
 '''
+
+
 def PublishData(FREQUENCYseqs,PERCENTseqs,LEADSseqs,UNIQUEseqs,LEADdistances,LEADdistancesBL,scriptspecs,looplength,filename):
-    for FREQUENCY,PERCENT,LEADS,UNIQUE,LEADD,LEADBL,LOOP,i in zip(FREQUENCYseqs,PERCENTseqs,LEADSseqs,UNIQUEseqs,LEADdistances,LEADdistancesBL,looplength,xrange(len(looplength))):
+    for FREQUENCY,PERCENT,LEADS,UNIQUE,LEADD,LEADBL,LOOP,i in zip(FREQUENCYseqs,PERCENTseqs,LEADSseqs,UNIQUEseqs,LEADdistances,LEADdistancesBL,looplength,range(len(looplength))):
         publishdata = open(filename+'_Region_'+str(i+1)+'.csv','wb')
         writer1 = csv.writer(publishdata)
 
-        #Job Overview
+        # Job Overview
         writer1.writerow(['JOB SUMMARY:'])
         for specs in scriptspecs:
             writer1.writerow(specs)
@@ -264,14 +237,14 @@ def PublishData(FREQUENCYseqs,PERCENTseqs,LEADSseqs,UNIQUEseqs,LEADdistances,LEA
         writer1.writerow(['Length diversity range:',LOOP[0],LOOP[1]])
         writer1.writerow('\n')
 
-        #Number of times each residue occurs
+        # Number of times each residue occurs
         writer1.writerow(['Residue Occurrences:'])
         writer1.writerow(list(aa))
         for row in FREQUENCY:
             writer1.writerow(row)
         writer1.writerow('\n')
 
-        #Frequency of times each residue occurs
+        # Frequency of times each residue occurs
         writer1.writerow(['Residue Frequency:'])
         writer1.writerow(list(aa))
         for row in PERCENT:
@@ -282,83 +255,78 @@ def PublishData(FREQUENCYseqs,PERCENTseqs,LEADSseqs,UNIQUEseqs,LEADdistances,LEA
         Take PERCENTseqs (site-wise diveristy matrix) as Heat map figure maker.
         Upper and lower bounds (vmin=, vmax=) for color bar can be adjusted to highlight poorly
         represented residues. 
-'''
+        '''
         vmin = 0.0
         vmax = 0.6
-        
-        if found == True:
-            plt.close('all')
 
-            freq_norm = PERCENT[:]
-            norm_mat = [np.sum(a[:20]) for a in PERCENT]
+        plt.close('all')
 
-            for pi in xrange(len(PERCENT)):
-                for pj in xrange(len(PERCENT[pi])-2):
-                    freq_norm[pi][pj] = PERCENT[pi][pj]/norm_mat[pi]
+        freq_norm = PERCENT[:]
+        norm_mat = [np.sum(a[:20]) for a in PERCENT]
 
-            data = zip(*np.array(freq_norm))
-            df = pd.DataFrame(data)
-            
-            Cols = [str(s+1) for s in xrange(len(PERCENT))]
+        for pi in range(len(PERCENT)):
+            for pj in range(len(PERCENT[pi])-2):
+                freq_norm[pi][pj] = PERCENT[pi][pj]/norm_mat[pi]
 
-            Index = list('ACDEFGHIKLMNPQRSTVWY*-')
+        data = zip(*np.array(freq_norm))
+        df = pd.DataFrame(data)
 
-            df = pd.DataFrame(data, index=Index, columns=Cols)
-            df_alt = df.copy()
+        Cols = [str(s+1) for s in range(len(PERCENT))]
 
-            df_max = df_alt.drop(df_alt.index[[20,21]]).max().max()
-            df_min = df_alt.drop(df_alt.index[[20,21]]).min().min()
-            df = df_alt.drop(df_alt.index[[20,21]])
+        Index = list('ACDEFGHIKLMNPQRSTVWY*-')
 
-            fig,ax=plt.subplots(figsize=(15,10))
+        df = pd.DataFrame(data, index=Index, columns=Cols)
+        df_alt = df.copy()
 
-            ax.xaxis.tick_top()
-            ax.yaxis.tick_left()
+        df_max = df_alt.drop(df_alt.index[[20, 21]]).max().max()
+        df_min = df_alt.drop(df_alt.index[[20, 21]]).min().min()
+        df = df_alt.drop(df_alt.index[[20, 21]])
 
-            plt.text(0.5,1.08,'Sitewise Frequency Analysis - Region '+str(i+1),
-                     fontsize=25,
-                     horizontalalignment='center',
-                     transform=ax.transAxes
-                     )
+        fig,ax=plt.subplots(figsize=(15,10))
 
-            plt.gca().invert_yaxis() 
-            plt.pcolor(df, cmap='Blues',vmin=vmin, vmax=vmax )
+        ax.xaxis.tick_top()
+        ax.yaxis.tick_left()
 
-            plt.yticks(np.arange(0.5, len(df.index), 1), df.index)
-            plt.xticks(np.arange(0.5, len(df.columns), 1), df.columns)
+        plt.text(0.5,1.08,'Sitewise Frequency Analysis - Region '+str(i+1),
+                 fontsize=25,
+                 horizontalalignment='center',
+                 transform=ax.transAxes
+                 )
 
-            plt.ylabel('Residue',fontsize=20)
-            plt.xlabel('Site',fontsize=20)
-                
-            plt.colorbar()
-            plt.savefig(filename+'_Region-'+str(i+1)+'_'+curr_date+'.png', dpi=300)
-            #plt.show()
-            if i+1 == len(looplength):
-                print('Summarizing figures have been stored within {0} for future reference.'.format(os.getcwd()))
-        else:
-            pass
-        '''
-'''
-        #Ranking of major protein clusters
+        plt.gca().invert_yaxis()
+        plt.pcolor(df, cmap='Blues',vmin=vmin, vmax=vmax )
+
+        plt.yticks(np.arange(0.5, len(df.index), 1), df.index)
+        plt.xticks(np.arange(0.5, len(df.columns), 1), df.columns)
+
+        plt.ylabel('Residue',fontsize=20)
+        plt.xlabel('Site',fontsize=20)
+
+        plt.colorbar()
+        plt.savefig(filename+'_Region-'+str(i+1)+'_'+curr_date+'.png', dpi=300)
+        if i+1 == len(looplength):
+            print('Summarizing figures have been stored within {0} for future reference.'.format(os.getcwd()))
+
+        # Ranking of major protein clusters
         writer1.writerow(['Familial Interconnectivity (Hamming distance scoring):'])
         for row in LEADD:
             writer1.writerow(row)
         writer1.writerow('\n')
 
-        #Ranking of major protein clusters revised with Blosum 64
+        # Ranking of major protein clusters revised with Blosum 64
         writer1.writerow(['Familial Interconnectivity (revised BLOSUM64 scoring):'])
         for row in LEADBL:
             writer1.writerow(row)
         writer1.writerow('\n')
-        
-        #Ranking of major protein clusters
+
+        # Ranking of major protein clusters
         writer1.writerow(['Sequence Leads:'])
         writer1.writerow(['Sequence','Frequency','Index'])
         for row in LEADS:
             writer1.writerow(row[0]+[row[1]])
         writer1.writerow('\n')
 
-        #All unique sequences listed
+        # All unique sequences listed
         writer1.writerow(['All Unique Sequences (BG removed):'])
         writer1.writerow(['Sequence','Frequency'])
         for size in UNIQUE:
@@ -367,15 +335,19 @@ def PublishData(FREQUENCYseqs,PERCENTseqs,LEADSseqs,UNIQUEseqs,LEADdistances,LEA
                     if row: writer1.writerow(row)
         writer1.writerow('\n')
 
-        
+
         publishdata.close()
 
 
 def hist_export(prob, sample_id):
-    '''prob = list of values to be plotted as histogram
+    """
+        prob = list of values to be plotted as histogram
         score_type is specific to the method used to calculate plotted values
         sample_id refers to the source of data
-    '''
+    :param prob:
+    :param sample_id:
+    :return:
+    """
     fig, ax = plt.subplots(1)
 
     x = np.array(prob)
@@ -388,17 +360,17 @@ def hist_export(prob, sample_id):
     textstr = '$\mu=%.3f$\n$\mathrm{median}=%.3f$\n$\sigma=%.3f$'%(mu, median, sigma)
 
     ax.hist(x, bins=50, align='mid', range=(x.min(),x.max()), color='gray')
-    
+
     # these are matplotlib.patch.Patch properties
     props = dict(boxstyle='round', facecolor='cornflowerblue', alpha=0.5)
-    
+
     # place a text box in upper left in axes coords
     ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=16,
             verticalalignment='top', bbox=props)
     header = 'Mutual Information (MIp) Histogram'
     ax.set_title(sample_id+' '+header)
     plt.savefig(sample_id+'_'+curr_date+'.png', dpi=300)
-    return  
+    return
 
 
 ###################################################################
@@ -410,7 +382,6 @@ Interface Modification (Clear characters)
 Purpose: Clears all text currently in interface
 Note: 
 '''
-
 def clear():
     os.system(['clear','cls'][os.name == 'nt'])
 
@@ -419,7 +390,6 @@ Sequence Analysis (DNA to AAs)
 Purpose: Translates any input DNA sequence into amino acids
 Note: Notably, used in interface to provide translated sequence while entering DNA information real-time
 '''
-
 def translate_dna(sequence):
     codontable = {
     'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
@@ -454,7 +424,6 @@ Interface Menu (Load Job)
 Purpose: Attempts to access pickled 'SavedJobs.p' folder for previously worked files, with corresponding menu
 Note: If no file is detected, it will generate some default protein scaffold settings
 '''
-
 def LoadJobs():
     try:
         saved = open( "SavedJobs.p", "rb" )
@@ -463,35 +432,35 @@ def LoadJobs():
     except:
         DefaultJobs = [['Affibody_ABY025', '', 'GCCGAAGCGAAATAC', 'GCTAGC', 'GGATCC', 2, [['CTGCCGAACCTGACC', 13, 13, 2], ['GACCCGTCCCAGAGCTCTGAACTCCTGTCTGAGGCGAAGAAACTGAACGATTCCCAAGCACCAAAA', 13, 13, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]]]
         DefaultJobs.append(['DARPin', '', 'GACGTTAACGCT', 'GGATCC', 'AAGCTT', 2, [['ACTCCGCTGCACCTGGCTGCT', 6, 6, 0], ['GGTCACCTGGAAATCGTTGAAGTTCTGCTGAAGTACGGTGCT', 2, 2, 0], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4,6, 2]]])
-        DefaultJobs.append(['Fibronectin_Fn3HP','High_affinity.fasta','TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG','GCTAGC','GGATCC',3,[['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG',6,10,3],['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA',3,7,1],['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG',6,12,3]]+[['',4,6,2] for j in xrange(5)]])
+        DefaultJobs.append(['Fibronectin_Fn3HP','High_affinity.fasta','TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG','GCTAGC','GGATCC',3,[['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG',6,10,3],['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA',3,7,1],['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG',6,12,3]]+[['',4,6,2] for j in range(5)]])
         DefaultJobs.append(['Gene-2-Protein_Gp2', 'Gp2_evolved_binders.fasta', 'AAATTTTGGGCGACTGTA', 'GCTAGC', 'GGATCC', 2, [['TTCGAGGTTCCGGTTTATGCTGAAACCCTGGACGAAGCACTGGAACTGGCCGAATGGCAGTAC', 6, 8, 6], ['GTGACCCGCGTGCGTCCG', 6, 8, 6], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
         DefaultJobs.append(['Knottin', '', 'GGCCAGTCTGGCCAGGGCACCTGCAACACCCCGGGCTGCACCTGCAGCTGGCCGGTGTGC', 'TGACTAGCAATGCTGACTGA', 'TCTGGTGACTACAACAAAAAC', 1, [['TGCGGCGAAACCTGCGTGGGCGGAGGGCAGTCTGGGCAG', 7, 7, 0], ['', 4, 6, 2], ['',4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
 
         saved = open( "SavedJobs.p", "wb" )
         pickle.dump(DefaultJobs, saved)
         saved.close()
-    print '\n'*40 + 'Loaded Jobs:'
+    print('\n' * 40 + 'Loaded Jobs:')
     for job in DefaultJobs:
-        print ' -',job[0]
-    print '\n'*(20-len(DefaultJobs))
+        print(' -', job[0])
+    print('\n' * (20 - len(DefaultJobs)))
     __getch()
 
     JobMenu = ['Job Name: ','FASTA/FASTQ File: ','Gene Start:',"5' Anchor: ","3' Anchor: ",'# of Diversified Regions: ']
     OptionsMenu = ['Select','Delete','Return to Main Menu','Exit']
-    ss,cc,ii = 0,79,0
+    ss, cc, ii = 0, 79, 0
     while True:
         clear()
-        print ' '*70 + 'Set',str(ii+1),'of',str(len(DefaultJobs))
-        print '\n'*10 + 'Saved Files:'.center(cc)
+        print(' ' * 70 + 'Set', str(ii + 1), 'of', str(len(DefaultJobs)))
+        print('\n' * 10 + 'Saved Files:'.center(cc))
         for i in range(len(JobMenu)):
             print (JobMenu[i]+'       '+str(DefaultJobs[ii][i]).center(30)+'   ').center(cc)
-        print ''
+        print('')
         for i in range(len(OptionsMenu)):
             if i == ss:
                 print ('>  '+OptionsMenu[i].center(10)+'  <').center(cc)
             else:
                 print ('   '+OptionsMenu[i].center(10)+'   ').center(cc)
-        print '\n'*10
+        print('\n' * 10)
         key = __getch()
         if key == 'Up':
             ss = (ss-1)%len(OptionsMenu)
@@ -503,15 +472,15 @@ def LoadJobs():
             ii = (ii+1)%len(DefaultJobs)
         elif key == 'Enter':
             if ss == 0:
-                return DefaultJobs[ii][:-1],DefaultJobs[ii][-1]
+                return DefaultJobs[ii][:-1], DefaultJobs[ii][-1]
             elif ss == 1:
-                print 'Are you sure?'.center(cc) + '\n' + 'Press escape to abort...'.center(cc)
+                print('Are you sure?'.center(cc) + '\n' + 'Press escape to abort...'.center(cc))
                 __getch()
                 del DefaultJobs[ii]
                 saved = open( "SavedJobs.p", "wb" )
                 pickle.dump(DefaultJobs, saved)
                 saved.close()
-                print 'Deleted job template.'
+                print('Deleted job template.')
                 time.sleep(1.0)
                 ii = 0
             elif ss == 3:
@@ -524,9 +493,7 @@ Interface Menu (Keypress Recording)
 Purpose: Logs keypress without using input functions for quicker, smoother experience
 Note: Interprets arrowkeys as well! Should be able to handle Windows, Mac, and Linux system
 '''
-
 def __getch():
-    from platform import system
     if system_name == 'Windows':
         from msvcrt import getch
         while True:
@@ -557,50 +524,50 @@ def __getch():
             ch = sys.stdin.read(1)
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    	if ch == '\r':
-    		return 'Enter'
-    	elif ch == '`':
-    		exit()
-    	elif ord(ch) == 127:
-    		return 'Delete'
-    	elif ord(ch) == 27:
-    		ch = sys.stdin.read(2)
-    		if ch == '[A':
-    			return 'Up'
-    		elif ch == '[B':
-    			return 'Down'
-    		elif ch == '[C':
-    			return 'Right'
-    		elif ch == '[D':
-    			return 'Left'
-    	else:
-    		return ch
+        if ch == '\r':
+            return 'Enter'
+        elif ch == '`':
+            exit()
+        elif ord(ch) == 127:
+            return 'Delete'
+        elif ord(ch) == 27:
+            ch = sys.stdin.read(2)
+            if ch == '[A':
+                return 'Up'
+            elif ch == '[B':
+                return 'Down'
+            elif ch == '[C':
+                return 'Right'
+            elif ch == '[D':
+                return 'Left'
+        else:
+            return ch
+
 
 '''
 Interface Menu (Main Menu)
 Purpose: First menu to operate the algorithm, branches to Load Jobs, Settings, and Start Job
 Note:
 '''
-
 def Main(settings):
     MainOptions = ['Start Job','Load  Job','Settings','Information','Exit']
     clear()
     cc = 79
-    print '\n'*4
-    print '##################################################################'.center(cc)
-    print '##                                                              ##'.center(cc)
-    print '##                          ScaffoldSeq                         ##'.center(cc)
-    print '##                                                              ##'.center(cc)
-    print '##                          Hackel Lab                          ##'.center(cc)
-    print '##                    University of Minnesota                   ##'.center(cc)
-    print '##                                                              ##'.center(cc)
-    print '##                          Version 1.9                         ##'.center(cc)
-    print '##                    Last Updated: 2/16/2016                   ##'.center(cc)
-    print '##                   Woldring - Holec - Hackel                  ##'.center(cc)
-    print '##                                                              ##'.center(cc)
-    print '##                  Press any key to continue...                ##'.center(cc)
-    print '##                                                              ##'.center(cc)
-    print '##################################################################'.center(cc)
+    print('\n' * 4)
+    print('##################################################################'.center(cc))
+    print('##                                                              ##'.center(cc))
+    print('##                          ScaffoldSeq                         ##'.center(cc))
+    print('##                                                              ##'.center(cc))
+    print('##                          Hackel Lab                          ##'.center(cc))
+    print('##                    University of Minnesota                   ##'.center(cc))
+    print('##                                                              ##'.center(cc))
+    print('##                          Version 1.9                         ##'.center(cc))
+    print('##                    Last Updated: 2/16/2016                   ##'.center(cc))
+    print('##                   Woldring - Holec - Hackel                  ##'.center(cc))
+    print('##                                                              ##'.center(cc))
+    print('##                  Press any key to continue...                ##'.center(cc))
+    print('##                                                              ##'.center(cc))
+    print('##################################################################'.center(cc))
 
     __getch()
     clear()
@@ -608,13 +575,13 @@ def Main(settings):
     cc,ss = 79,0
     while True:
         clear()
-        print '\n'*5+'-- Main Menu --'.center(cc) + '\n'
-        for i in xrange(len(MainOptions)):
+        print('\n' * 5 + '-- Main Menu --'.center(cc) + '\n')
+        for i in range(len(MainOptions)):
             if i == ss:
                 print ('>  '+MainOptions[i]+'  <').center(cc)
             else:
-                print MainOptions[i].center(cc)
-        print '\n'*9
+                print(MainOptions[i].center(cc))
+        print('\n' * 9)
         key = __getch()
         if key == 'Up':
             ss = (ss-1)%len(MainOptions)
@@ -641,7 +608,12 @@ def Main(settings):
                 settings = MainSettings(settings)
             elif ss == 3:
                 clear()
-                for i in textwrap.wrap('ScaffoldSeq was designed for quickly analyzing diversified regions within a protein or scaffold using high-throughput sequence data. The algorithm uniquely clusters similar clones, dampens dominant sequence motifs, and eliminates background signals to accurately highlight both heterogeneities and trends within very large datasets. The software produces sitewise and pairwise analyses for the user-defined regions of interest.'): print i
+                for i in textwrap.wrap('ScaffoldSeq was designed for quickly analyzing diversified regions within a ' + \
+                                       'protein or scaffold using high-throughput sequence data. The algorithm uniquely' + \
+                                       'clusters similar clones, dampens dominant sequence motifs, and eliminates' + \
+                                       'background signals to accurately highlight both heterogeneities and trends' + \
+                                       'within very large datasets. The software produces sitewise and pairwise analyses' + \
+                                       'for the user-defined regions of interest.'): print(i)
                 key = __getch()
             elif ss == 4:
                 raise SystemExit
@@ -655,30 +627,29 @@ job = ["" for x in xrange(len(JobMenu)-1)]+[2]    --> ['', '', '', '', '', 2]
 divs = [['',4,6,2] for j in xrange(8)]  
 
 '''
-
 def ModifyJob(job='',divs=''):
     cc,ss,rs = 79,0,0
     JobMenu = ['Job Name','FASTA/FASTQ File','Gene Start',"5' Anchor","3' Anchor",'# of Diversified Regions']
     RegionMenu = ['DNA After Region','Minimum Region Length','Maximum Region Length','Insert after # Position']
     OptionsMenu = ['Accept','Save','Cancel']
     if not job:
-        job = ["" for x in xrange(len(JobMenu)-1)]+[2]
-        divs = [['',4,6,2] for j in xrange(8)]
+        job = ["" for x in range(len(JobMenu)-1)]+[2]
+        divs = [['',4,6,2] for j in range(8)]
     limit = len(JobMenu)+len(RegionMenu)+len(OptionsMenu) + 1
     while True:
         clear()
         construct = translate_dna(job[2])
-        for i in xrange(job[5]):
+        for i in range(job[5]):
             construct += translate_dna(divs[i][3]*'***' + (divs[i][2]-divs[i][1])*'&&&'+(divs[i][1]-divs[i][3])*'***')
             construct += translate_dna(divs[i][0])
-        print '-- Job Settings --'.center(cc)
+        print('-- Job Settings --'.center(cc))
 
         for i in range(len(JobMenu)):
             if i == ss:
                 print (JobMenu[i]+' >'+str(job[i]).center(30)+'< ').center(cc)
             else:
                 print (JobMenu[i]+'  '+str(job[i]).center(30)+'  ').center(cc)
-        print ''
+        print('')
         if ss == len(JobMenu):
             print ((' >'+'<Region '+str(rs+1)+'>'+'< ').center(20)).center(cc)
         else:
@@ -689,16 +660,15 @@ def ModifyJob(job='',divs=''):
                 print (RegionMenu[i]+' >'+str(divs[rs][i]).center(30)+'< ').center(cc)
             else:
                 print (RegionMenu[i]+'  '+str(divs[rs][i]).center(30)+'  ').center(cc)
-        print ''
+        print('')
         for i in range(len(OptionsMenu)):
             if i+len(JobMenu)+len(RegionMenu)+1 == ss:
                 print ('>  '+OptionsMenu[i].center(30)+'  <').center(cc)
             else:
                 print ('   '+OptionsMenu[i].center(30)+'   ').center(cc)
-        print '\n'+'Translated Gene of Interest:'.center(cc)
-        print construct.center(cc) + '\n'
-        print '? = undeclared  - = diversified  + = loop length  ! = translation error'.center(cc)
-
+        print('\n' + 'Translated Gene of Interest:'.center(cc))
+        print(construct.center(cc) + '\n')
+        print('? = undeclared  - = diversified  + = loop length  ! = translation error'.center(cc))
 
         key = __getch()
         if key == 'Up':
@@ -711,13 +681,14 @@ def ModifyJob(job='',divs=''):
                     if construct.count('!') + construct.count('?') != 0: raise SystemError
                     if job[3].count('A') + job[3].count('T') + job[3].count('C') + job[3].count('G') != len(job[3]): raise SystemError
                     if job[4].count('A') + job[4].count('T') + job[4].count('C') + job[4].count('G') != len(job[4]): raise SystemError
-                    print 'Press any key to start job...'.center(cc)+'\n'+'Esc to abort'.center(cc)
+                    print('Press any key to start job...'.center(cc) + '\n' + 'Esc to abort'.center(cc))
                     __getch()
                     return job,divs
                 except:
-                    print '\n'*30
-                    print 'Invalid entry in settings'.center(cc)+'\n'+'Be sure anchors are properly defined'.center(cc) + 'There are no undeclared or translation errors'.center(cc)
-                    print '\n'*19
+                    print('\n' * 30)
+                    print('Invalid entry in settings'.center(cc) + '\n' + 'Be sure anchors are properly defined'.center(
+                        cc) + 'There are no undeclared or translation errors'.center(cc))
+                    print('\n' * 19)
                     __getch()
             elif ss == limit-2:
                 try:
@@ -727,7 +698,7 @@ def ModifyJob(job='',divs=''):
                 except:
                     DefaultJobs = [['Affibody_ABY025', '', 'GCCGAAGCGAAATAC', 'GCTAGC', 'GGATCC', 2, [['CTGCCGAACCTGACC', 13, 13, 2], ['GACCCGTCCCAGAGCTCTGAACTCCTGTCTGAGGCGAAGAAACTGAACGATTCCCAAGCACCAAAA', 13, 13, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]]]
                     DefaultJobs.append(['DARPin', '', 'GACGTTAACGCT', 'GGATCC', 'AAGCTT', 2, [['ACTCCGCTGCACCTGGCTGCT', 6, 6, 0], ['GGTCACCTGGAAATCGTTGAAGTTCTGCTGAAGTACGGTGCT', 2, 2, 0], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4,6, 2]]])
-                    DefaultJobs.append(['Fibronectin_Fn3HP','High_affinity.fasta','TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG','GCTAGC','GGATCC',3,[['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG',6,10,3],['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA',3,7,1],['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG',6,12,3]]+[['',4,6,2] for j in xrange(5)]])
+                    DefaultJobs.append(['Fibronectin_Fn3HP','High_affinity.fasta','TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG','GCTAGC','GGATCC',3,[['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG',6,10,3],['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA',3,7,1],['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG',6,12,3]]+[['',4,6,2] for j in range(5)]])
                     DefaultJobs.append(['Gene-2-Protein_Gp2', 'Gp2_evolved_binders.fasta', 'AAATTTTGGGCGACTGTA', 'GCTAGC', 'GGATCC', 2, [['TTCGAGGTTCCGGTTTATGCTGAAACCCTGGACGAAGCACTGGAACTGGCCGAATGGCAGTAC', 6, 8, 6], ['GTGACCCGCGTGCGTCCG', 6, 8, 6], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
                     DefaultJobs.append(['Knottin', '', 'GGCCAGTCTGGCCAGGGCACCTGCAACACCCCGGGCTGCACCTGCAGCTGGCCGGTGTGC', 'TGACTAGCAATGCTGACTGA', 'TCTGGTGACTACAACAAAAAC', 1, [['TGCGGCGAAACCTGCGTGGGCGGAGGGCAGTCTGGGCAG', 7, 7, 0], ['', 4, 6, 2], ['',4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
                     saved = open( "SavedJobs.p", "wb" )
@@ -737,7 +708,7 @@ def ModifyJob(job='',divs=''):
                 saved = open( "SavedJobs.p", "wb" )
                 pickle.dump(DefaultJobs, saved)
                 saved.close()
-                print '\n'*10+'Saved!'.center(cc)+'\n'*18
+                print('\n' * 10 + 'Saved!'.center(cc) + '\n' * 18)
                 __getch()
             elif ss == limit-1:
                 return True, False
@@ -781,14 +752,14 @@ def MainSettings(settings):
         cc,ss,limit,switch,pairwise_analysis = 79,0,len(SettingsMenu),['On','Off'],['On','Off']
         while True:
             clear()
-            print '\n'*2
-            print '-- System Settings --'.center(cc) + '\n'
-            for i in xrange(len(SettingsMenu)):
+            print('\n' * 2)
+            print('-- System Settings --'.center(cc) + '\n')
+            for i in range(len(SettingsMenu)):
                 if i == 5: display = SettingsMenu[i][switch.index(settings[3])]
                 else: display = SettingsMenu[i]
                 if i == ss: print (display+'    >  '+settings[i]+'  <').center(cc)
                 else: print (display+'       '+settings[i]+'   ').center(cc)
-            print '\n'*10
+            print('\n' * 10)
             key = __getch()
             if key == 'Up':
                 ss = (ss-1)%len(SettingsMenu)
@@ -808,9 +779,9 @@ def MainSettings(settings):
                     [float(i) for i in settings[0:3]+[settings[5]]]
                     return settings
                 except:
-                    print '\n'*30
-                    print 'Invalid entry in settings'.center(cc)+'\n'+'Be sure all values are numbers'.center(cc)
-                    print '\n'*19
+                    print('\n' * 30)
+                    print('Invalid entry in settings'.center(cc) + '\n' + 'Be sure all values are numbers'.center(cc))
+                    print('\n' * 19)
                     __getch()
 
 def Silent_Load(fname):
@@ -819,16 +790,16 @@ def Silent_Load(fname):
     JobMenu = ['Job Name','FASTA/FASTQ File','Gene Start',"5' Anchor","3' Anchor",'# of Diversified Regions']
     RegionMenu = ['DNA After Region','Minimum Region Length','Maximum Region Length','Insert after # Position']
     SettingMenu = ["Sequence Similarity Threshold","Frequency Dampening Power","Maximum Sequence Count","Assay Background Filter","Pairwise Analysis","Filter Coefficient","Hard Cap Filter"]
-    Jobs,Regions,Settings = ['' for i in xrange(len(JobMenu))],['' for i in xrange(len(RegionMenu))],['' for i in xrange(len(SettingMenu))]
-    for i in xrange(len(JobMenu)):
+    Jobs,Regions,Settings = ['' for i in range(len(JobMenu))],['' for i in range(len(RegionMenu))],['' for i in range(len(SettingMenu))]
+    for i in range(len(JobMenu)):
         for line in lines:
             if JobMenu[i] in line:
                 Jobs[i] = line[line.index(JobMenu[i])+len(JobMenu[i]):].replace(' ','').replace('\n','').replace(':','')
-    for i in xrange(len(RegionMenu)):
+    for i in range(len(RegionMenu)):
         for line in lines:
             if RegionMenu[i] in line:
                 Regions[i] = line[line.index(RegionMenu[i])+len(RegionMenu[i]):].replace(' ','').replace('\n','').replace(':','')
-    for i in xrange(len(SettingMenu)):
+    for i in range(len(SettingMenu)):
         for line in lines:
             if SettingMenu[i] in line:
                 Settings[i] = line[line.index(SettingMenu[i])+len(SettingMenu[i]):].replace(' ','').replace('\n','').replace(':','')
@@ -840,6 +811,30 @@ def Silent_Load(fname):
 ##############################
 ###   Start of Execution   ###
 ##############################
+
+'''
+Silent Start Detector
+Purpose: If a command line argument is provided, the program will run in silence
+Notes:
+'''
+if len(sys.argv) == 1:
+    silent_mode = False
+elif len(sys.argv) == 2:  # Triggers Interface Mode
+    print('Silent mode started. Interactive mode will be circumvented.')
+    if os.path.isfile(sys.argv[1]):
+        job_file = sys.argv[1]
+        silent_mode = True
+    else:
+        print('Job file dictated by command line argument not located. Please check file name.')
+        __getch()
+elif len(sys.argv) > 2:
+    print('Too many input arguments. Please revise command line arguments.')
+    print('Press any key to exit.')
+    input()
+    raise SystemExit
+
+start = time.time() # Starts timer
+curr_date = datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
 
 '''
 Program Start
@@ -861,7 +856,7 @@ else:
 adaptors = job [3:5]
 FRAMEsplit.append(job[2])
 looplength,diversityspacing = [],[]
-for i in xrange(job[5]):
+for i in range(job[5]):
     looplength.append(divs[i][1:3])
     diversityspacing.append(divs[i][3])
     FRAMEsplit.append(divs[i][0])
@@ -878,7 +873,7 @@ for i in xrange(job[5]):
 ###################################################################
 
 #Generate empty count matrices for later counting
-LOOPcnt =   [[[[0.*22] for j in xrange(i)] for i in range(pos[0],pos[1]+1)] for pos in looplength]
+LOOPcnt =   [[[[0.*22] for j in range(i)] for i in range(pos[0],pos[1]+1)] for pos in looplength]
 ###      Set up variables to be used for sequence sorting
 
 '''
@@ -894,29 +889,29 @@ def Adaptor_Alignment(seq,adaptors):
         return length,protein
     else:
         adaptor_index = []
-        for i in xrange(2):
+        for i in range(2):
             temp = []
-            for j in xrange(len(seq) - len(adaptors[i])+1):
+            for j in range(len(seq) - len(adaptors[i])+1):
                 temp.append(FamCrit(seq[j:j+len(adaptors[i])],adaptors[i])*(len(adaptors[i])))
-                print 'Seq:',seq[j:j+len(adaptors[i])],adaptors[i]
-                print temp[-1]
-            print len(adaptors[i]) - max(temp)
-            print adaptors
+                print('Seq:', seq[j:j + len(adaptors[i])], adaptors[i])
+                print(temp[-1])
+            print(len(adaptors[i]) - max(temp))
+            print(adaptors)
             if len(adaptors[i]) - max(temp) <= adaptor_tolerance:
-                print temp.index(max(temp))
+                print(temp.index(max(temp)))
                 adaptor_index.append(temp.index(max(temp)))
             else:
                 return 0,''
         length = len(seq[adaptor_index[0]:adaptor_index[1]]) - len(adaptors[0])
         protein = seq[adaptor_index[0]+len(adaptors[0]):adaptor_index[1]]
-        return length,protein
-    
+        return length, protein
+
 '''
 Program Start
 '''
 
 loadtime = time.time()-start
-print 'Job has started. \nScaffoldSeq is evaluating the data set...'
+print('Job has started. \nScaffoldSeq is evaluating the data set...')
 time1 = time.time()
 
 ProteinTotal,FULLPROT,timeCnt = 0,[],[]
@@ -933,12 +928,12 @@ FULLPROT --> Stores list of all diversified regions originating from the same
 '''
 while not os.path.isfile(files):
     files = input('\nError! \nSequence data file must exist within the current directory. \nPlease enter the sequence file name: \n')
-        
+
 with open(files, 'r') as Mainfile:
     LOWlmt = len(''.join(FRAMEsplit)) + 3*(sum([i[0] for i in looplength]))
     HIGHlmt = len(''.join(FRAMEsplit)) + 3*(sum([i[1] for i in looplength]))
     SeqCnt = 0
-    LOOPseqs = [[[] for i in xrange(j[1]-j[0]+1)] for j in looplength]
+    LOOPseqs = [[[] for i in range(j[1]-j[0]+1)] for j in looplength]
 
     for line in Mainfile:
         SeqCnt += 1
@@ -954,7 +949,7 @@ with open(files, 'r') as Mainfile:
             Purpose: Goes through each matching sequence at tries to align sections of framework in order to identify diversified regions
             Note:
             '''
-            for (i,loop) in zip(xrange(len(looplength)),looplength):
+            for (i,loop) in zip(range(len(looplength)),looplength):
                 protFrag,protFragRat,protFragaa = [],[],[]
 
                 LOOPstart += len(FRAMEsplit[i])+loop[0]*3
@@ -964,7 +959,7 @@ with open(files, 'r') as Mainfile:
 
                 for x in protFrag:
                     protFragRat.append(FamCrit(FRAMEsplit[i+1],x))
-                
+
                 tag = protFragRat.index(max(protFragRat))
                 LOOPseq = protein[LOOPstart-loop[0]*3:LOOPstart+tag*3]
 
@@ -978,7 +973,7 @@ with open(files, 'r') as Mainfile:
 #                    matchFn += 1
 #                    LOOPseqs[i][tag].append(translate_dna(LOOPseq))
 #                    tempLOOPS.append(translate_dna(LOOPseq))
-                   
+
                 LOOPstart += 3*tag      #Reset loopstart variable to prepare for next interation
 
                 ###         Take into account loop length diversity (-1...+1)
@@ -989,11 +984,11 @@ with open(files, 'r') as Mainfile:
             ProteinTotal += 1
 
         if SeqCnt%100000 == 0:  # Give us some kind of meter for data processing
-            print 'Scanned  next 100k entries in %.1f sec' % (time.time() - timeCnt[0])
+            print('Scanned  next 100k entries in %.1f sec' % (time.time() - timeCnt[0]))
 
 # Remind user how long the algorithm took to identify all relavent proteins
 scantime = time.time() - time1
-print 'Scanned full data set in %.1f sec' % (scantime)
+print('Scanned full data set in %.1f sec' % (scantime))
 time1b = time.time()
 
 
@@ -1015,7 +1010,7 @@ UNIQUELOOPseqs = [[sorted(LOOPseq,key=lambda x: -x[1]) for LOOPseq in LOOPset] f
 ###################################
 
 scantime1 = time.time() - time1b
-print 'Organized Diversified Regions in %.1f sec' % (scantime1)
+print('Organized Diversified Regions in %.1f sec' % (scantime1))
 time2 = time.time()
 
 #######################################
@@ -1042,7 +1037,7 @@ Note: Can be turned off via the settings file
 
 
 if use_bck == 'On':
-    bck = 0.25/bead_ratio    
+    bck = 0.25/bead_ratio
     cut = [(sum(cntr)*bck)+((sum(cntr)*bck)**(0.5)) for cntr in FREQcntr]
     for cs,c,cntr in zip(cntset,cut,FREQcntr):
         setmark = 0.
@@ -1058,17 +1053,17 @@ pairBG = float(min(BGcap))
 
 UNIQUELOOPseqs = [[[i for i in FREQset if i[1] > BG] for FREQset in UNIQUELOOPseq] for (UNIQUELOOPseq,BG) in zip(UNIQUELOOPseqs,BGcap)]
 
-print 'Total Proteins', str(ProteinTotal)
+print('Total Proteins', str(ProteinTotal))
 
 looptime = time.time() - time2
-print 'Background Removed in %.2f sec' % (looptime)
+print('Background Removed in %.2f sec' % (looptime))
 time3 = time.time()
 
 ###################################
 ##       Family Clustering       ##
 ###################################
 
-print 'Clustering Threshold : ', thresh
+print('Clustering Threshold : ', thresh)
 
 '''
 Sequence Analysis (Gap alignments)
@@ -1091,8 +1086,8 @@ Note:
 ##    return loop_list
 
 def add_gap(loop_list,big_loop,depth):
-    for i in xrange(len(loop_list)):
-        for fam in xrange(len(loop_list[i])):
+    for i in range(len(loop_list)):
+        for fam in range(len(loop_list[i])):
             for seq in loop_list[i][fam]:
                 try:
                     seq[0] = seq[0][:(len(seq[0])-depth)] \
@@ -1110,12 +1105,12 @@ if damp == 1.0:
     pass
 #else:
 #print 'UNIQUELOOPseqs', UNIQUELOOPseqs
-    
-    
+
+
 CLUSTERseqs = []
 fam1cnt = 1
 for LOOPseqs,loop,space in zip(UNIQUELOOPseqs,looplength,diversityspacing):
-    #print 'LOOPseqs', LOOPseqs[0]    
+    #print 'LOOPseqs', LOOPseqs[0]
     fam1cnt,FamLst1 = 1,[]
     for B in range(len(LOOPseqs)):
         if len(LOOPseqs[B]) == 0:
@@ -1141,7 +1136,7 @@ for LOOPseqs,loop,space in zip(UNIQUELOOPseqs,looplength,diversityspacing):
                     if skip == 0 and FamLst1[B].index(zf) == len(FamLst1[B])-1:
                         FamLst1[B].append([ent])
                         fam1cnt += 1
-    
+
     CLUSTERseqs.append(add_gap(FamLst1,loop[1],space))
     #print 'CLUSTERseqs', CLUSTERseqs
 #print 'CLUSTERseqs', CLUSTERseqs
@@ -1150,7 +1145,7 @@ for LOOPseqs,loop,space in zip(UNIQUELOOPseqs,looplength,diversityspacing):
 
 
 uniquetime = time.time() - time3
-print 'Family Clusters Identified in %.2f sec' % (uniquetime)
+print('Family Clusters Identified in %.2f sec' % (uniquetime))
 time3b = time.time()
 
 
@@ -1173,32 +1168,32 @@ PERCENTseqs = [[[i/sum(j) for i in j] for j in loop] for loop in FREQUENCYseqs]
 ###
 
 sorttime = time.time() - time3b
-print 'Site-wise Frequency Matrix Constructed in %.2f sec' % (sorttime)
+print('Site-wise Frequency Matrix Constructed in %.2f sec' % (sorttime))
 time4 = time.time()
 freqmatrix = [a for b in PERCENTseqs for a in b]
 
 ###
 
 if pairwise == 'On':
-    
+
     # Add place holders for loop length diversity alignment for the list of
     # intact diversified regions (FULLPROT) originating from the same sequence
     seq = FullFormat(FULLPROT,looplength,diversityspacing)
 
     # Counts and stores all unique protein sequences in single list --> [[seq0, 0#],[seq1, 1#]...]
     seq = FullFreq(seq)
-    
-    print 'Analyzing Pairwise Interactions Within %.i Unique Proteins ' % len(seq)
-    
+
+    print('Analyzing Pairwise Interactions Within %.i Unique Proteins ' % len(seq))
+
     Unique_Prot = []
     Unique_Prot.append(len(seq))
-	
+
     pairdata, PERCENTpairseqs = FullPairwise(seq,pairBG,damp)
 
     results,freqdata,refs = FullMatrixCompare(pairdata,PERCENTpairseqs)
 
     pairtime = time.time() - time4
-    print 'Pairwise Matrices Constructed in %.2f sec' % (pairtime)
+    print('Pairwise Matrices Constructed in %.2f sec' % (pairtime))
     time4 = time.time()
 
 '''
@@ -1268,7 +1263,7 @@ def quik_diff(a,b):
     return len(a) - sum ( a[i] != b[i] for i in range(len(a)) )
 
 
-LEADdistances,LEADdistancesBL = [],[]
+LEADdistances, LEADdistancesBL = [],[]
 #Top 100 Lead Clones are used for similarity distance calculations 
 for LEADset in LEADSseqs:
     LEADS = [i[0][0] for i in LEADset]
@@ -1278,16 +1273,17 @@ for LEADset in LEADSseqs:
         LEADdistanceBL.append([seq])
         for seq2 in LEADS[:100]:
             LEADdistance[-1].append(quik_diff(seq,seq2))
-            if sum([ max([v for [k,v] in bl_64.items() for s in i,j if s in k]) for i,j in zip(seq,seq2)]) == 0:
+
+            if sum([ max([v for k, v in bl_64.items() for s in (i, j) if s in k]) for i,j in zip(seq, seq2)]) == 0:
                 LEADdistanceBL[-1].append(0)
                 #print seq,seq2
             else:
-                LEADdistanceBL[-1].append(float(sum([bl_64[(i,j)] for i,j in zip(seq,seq2)]))/(sum([ max([v for [k,v] in bl_64.items() for s in i,j if s in k]) for i,j in zip(seq,seq2)])))
+                LEADdistanceBL[-1].append(float(sum([bl_64[(i,j)] for i,j in zip(seq,seq2)]))/(sum([ max([v for [k,v] in bl_64.items() for s in (i,j) if s in k]) for i, j in zip(seq,seq2)])))
     LEADdistances.append(LEADdistance)
     LEADdistancesBL.append(LEADdistanceBL)
 
-phylotime = time.time() - time4
-print 'Similarity Matrix Constructed in %.2f sec' % (phylotime)
+phylo_time = time.time() - time4
+print('Similarity Matrix Constructed in %.2f sec' % phylo_time)
 time4b = time.time()
 #print LEADdistances
 
@@ -1298,7 +1294,7 @@ if pairwise == 'On':
 
     #Job Overview
     overview = []
-    for i in xrange(len(aa)):
+    for i in range(len(aa)):
         for j in range(len(aa)):
             overview.append(aa[i]+aa[j])
     writer1.writerow(['All Pairwise interactions:'])
@@ -1310,13 +1306,13 @@ if pairwise == 'On':
 
         MIcoord = 0.
 
-        for a,b,c,i in zip([ii for jj in f1 for ii in jj],[iii for jjj in p2 for iii in jjj],overview,xrange(len(overview))):
-            if float(a) != 0. and float(b) != 0.: MIcoord +=  float(b)*log(float(b)/float(a),2)   
-          
-            # If file size is not an issue, remove this conditional before next statement: if float(a) != 0. and float(b) != 0.: 
+        for a,b,c,i in zip([ii for jj in f1 for ii in jj],[iii for jjj in p2 for iii in jjj],overview,range(len(overview))):
+            if float(a) != 0. and float(b) != 0.: MIcoord +=  float(b)*log(float(b)/float(a),2)
+
+            # If file size is not an issue, remove this conditional before next statement: if float(a) != 0. and float(b) != 0.:
             if float(a) != 0. and float(b) != 0.: writer1.writerow(ref+["'"+c]+[a]+[b]+[abs(a-b)]+[float(b)*log(float(b)/float(a),2)]) #Space saving (this data file gets massive)
 
-        MIList.append([ref[1],MIcoord])    
+        MIList.append([ref[1],MIcoord])
 
     publishdata.close()
 
@@ -1325,21 +1321,20 @@ if pairwise == 'On':
     MI_APC_List = []
 
     for pair in MIList:
-	MI_APC_List.append([int(pair[0][:pair[0].index("&")]),int(pair[0][pair[0].index("&")+1:]),pair[1]])
+        MI_APC_List.append([int(pair[0][:pair[0].index("&")]),int(pair[0][pair[0].index("&")+1:]), pair[1]])
 
-    MI_APC_Set = set([x[0] for x in MI_APC_List]+[y[1] for y in MI_APC_List])
+        MI_APC_Set = set([x[0] for x in MI_APC_List]+[y[1] for y in MI_APC_List])
 
-    # Use this set to guide APC calc.
-    #MI_APC = [sum(x[1] for x in MIList if (int(x[0][:x[0].index("&")])== b or int(x[0][x[0].index("&")+1:]) == b)) for b in MI_APC_Set]
+        # Use this set to guide APC calc.
+        #MI_APC = [sum(x[1] for x in MIList if (int(x[0][:x[0].index("&")])== b or int(x[0][x[0].index("&")+1:]) == b)) for b in MI_APC_Set]
 
-    MI_APC = [sum(x[2] for x in MI_APC_List if (int(x[0])== b or int(x[1]) == b))/(len(MI_APC_Set)-1) for b in MI_APC_Set]
+        MI_APC = [sum(x[2] for x in MI_APC_List if (int(x[0])== b or int(x[1]) == b))/(len(MI_APC_Set)-1) for b in MI_APC_Set]
 
-    MI_avg = sum(MI_APC)/len(MI_APC)
+        MI_avg = sum(MI_APC)/len(MI_APC)
 
-    APC = [x[2]-(MI_APC[x[0]-1]*MI_APC[x[1]-1]/MI_avg) for x in MI_APC_List]
+        APC = [x[2]-(MI_APC[x[0]-1]*MI_APC[x[1]-1]/MI_avg) for x in MI_APC_List]
 
     MI_APC_MERGE = []
-
     for entry in enumerate(MI_APC_List):
         MI_APC_MERGE.append(entry[1])
         MI_APC_MERGE[entry[0]].append(APC[entry[0]])
@@ -1348,7 +1343,7 @@ if pairwise == 'On':
     #print 'Mutual Information Values Calculated in %.2f sec' % (MItime)
 
     time4c = time.time()
-	
+
     publishMIdata = open(filename+'_Mutual-Information.csv','wb')
     writerMI = csv.writer(publishMIdata)
 
@@ -1356,16 +1351,16 @@ if pairwise == 'On':
     writerMI.writerow(['Total Proteins', str(ProteinTotal)])
     writerMI.writerow(['Unique Proteins', '  %.i  ' % (Unique_Prot[0])])
     writerMI.writerow(['Total Clusters', fam1cnt ])
-    #writerMI.writerow(['Organized Diversified Regions (sec)', ' %.1f ' % (scantime1)])    
-    #writerMI.writerow(['Scanned Full Data Set (sec)', ' %.1f ' % (scantime)]) 
+    #writerMI.writerow(['Organized Diversified Regions (sec)', ' %.1f ' % (scantime1)])
+    #writerMI.writerow(['Scanned Full Data Set (sec)', ' %.1f ' % (scantime)])
     #writerMI.writerow(['Family Clustering (sec)', ' %.2f ' % (uniquetime)])
-    #writerMI.writerow(['Total Runtime (sec)', ' %.0f ' % (time.time()-time1)])	
+    #writerMI.writerow(['Total Runtime (sec)', ' %.0f ' % (time.time()-time1)])
     #writerMI.writerow(['Residue Frequency:'])
     #writerMI.writerow(list(aa))
     # for row in PERCENTpairseqs:
         # writerMI.writerow(row)
     writerMI.writerow('\n')
-    
+
     writerMI.writerow(['Site 1', 'Site 2', 'Mutual Information (MI) ', 'Mutual Information with Average Product Correction (MIp)'])
     for row in MI_APC_MERGE:
         writerMI.writerow(row)
@@ -1378,22 +1373,13 @@ if pairwise == 'On':
 
     publishMIdata.close()
 
+    print('Mutual Information for %i Site-pairs Calculated in %.2f sec' % (len(pairdata), MItime))
 
+    plt.close('all')
+    MI_flat_list = list(a for a in APC)
+    hist_export(MI_flat_list,filename)
 
-    print 'Mutual Information for %i Site-pairs Calculated in %.2f sec' % (len(pairdata), MItime)
-
-    if found == True:
-        plt.close('all')
-
-        MI_flat_list = list(a for a in APC)
-
-        hist_export(MI_flat_list,filename)
-        
-
-    else:
-        pass
-    
-    print 'Success!'    
+    print('Success!')
 
 scriptspecs = [['Job',filename], ['files',files], \
                ['thresh',str(thresh)], ['damp',str(damp)], \
@@ -1402,9 +1388,9 @@ scriptspecs = [['Job',filename], ['files',files], \
 ###
 PublishData(FREQUENCYseqs,PERCENTseqs,LEADSseqs,CLUSTERseqs,LEADdistances,LEADdistancesBL,scriptspecs,looplength,filename)
 # UNIQUELOOPseqs rather than CLUSTERseqs will print the full list of unique sequences with the removal of background.
-print '\n'
-print 'ScaffoldSeq completed the requested analyses in %.0f sec' % (time.time()-time1)
-print '\n'
-print 'Results for %s have been published to the output files.' % filename
-print 'Press any key to exit...'
+print('\n')
+print('ScaffoldSeq completed the requested analyses in %.0f sec' % (time.time() - time1))
+print('\n')
+print('Results for %s have been published to the output files.' % filename)
+print('Press any key to exit...')
 __getch()
