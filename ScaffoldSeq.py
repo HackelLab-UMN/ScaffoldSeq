@@ -1,49 +1,61 @@
+"""
+ScaffoldSeq: Software for characterization of directed evolution populations
+University of Minnesota
+Authors:
+    Daniel R. Woldring
+    Patrick V. Holec
+    Bejnamin J. Hackel
+
+April 5, 2016
+
+Updated:
+    Adam T. McConnell - May 13, 2019
+"""
 
 '''
 Default Library Loading
 Purpose: Load all libraries (most should be default)
 '''
-from sys import argv
-import difflib
-from collections import deque
-import string
+
+# TODO: clean up unnecessary import modules
+# TODO: clean up documentation
+# TODO: clean up docstrings
+# TODO: separate out
+# from sys import argv
+# from collections import deque
+# import string
+# import time
+# from collections import OrderedDict
+# import json
+# import itertools
 import csv
-import time
-from collections import OrderedDict
-import json
 import datetime
+import difflib
 from math import log
-import sys,os,re
-import itertools
-import os, pickle, time
-import textwrap
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
 from platform import system
+import pickle
+import sys  # os, re
+import textwrap
+import time
+
+
 if system() != 'Windows':
+    #  termios is Unix specific. It does not exist for Windows platforms
         import sys, tty, termios
 
-
-
-
-'''
-Warning: Visualization modules not included within default Python install.
-Optional: install via pip
-'''
-try:
-    import numpy as np
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    found = True
-except ImportError:
-    found = False
-    
-
+# TODO: Remove found var in all areas of this code
+found = True  # Temporary placeholder.
 
 '''
 Define Global Variables
 Purpose: Create a few standard variables to use throughout analysis
 Note:
 '''
-global aa,system_name,adaptor_tolerance,framework_match_threshold
+global aa, system_name, adaptor_tolerance, framework_match_threshold
 
 # Change this number for the number of mutations you want the adaptor alignment to allow
 # Note: This is typically 0, but we accept there is some experimental error with Illumina Sequencing which we estimate at 0.4% false negatives
@@ -58,28 +70,25 @@ aa = 'ACDEFGHIKLMNPQRSTVWY_-'
 system_name = system()
 
 
-
-
 '''
 Silent Start Detector
 Purpose: If a command line argument is provided, the program will run in silence
 Notes:
 '''
-
 if len(sys.argv) == 1:
-    silentmode = False
-elif len(sys.argv) == 2:  #Triggers Interface Mode
-    print 'Silent mode started. Interactive mode will be circumvented.'
+    silent_mode = False
+elif len(sys.argv) == 2:  # Triggers Interface Mode
+    print('Silent mode started. Interactive mode will be circumvented.')
     if os.path.isfile(sys.argv[1]):
         job_file = sys.argv[1]
-        silentmode = True
+        silent_mode = True
     else:
-        print 'Job file dictated by command line argument not located. Please check file name.'
+        print('Job file dictated by command line argument not located. Please check file name.')
         __getch()
 elif len(sys.argv) > 2:
-    print 'Too many input arguments. Please revise command line arguments.'
-    print 'Press any key to exit.'
-    raw_input()
+    print('Too many input arguments. Please revise command line arguments.')
+    print('Press any key to exit.')
+    input()
     raise SystemExit
     
 start = time.time() # Starts timer
@@ -162,14 +171,13 @@ Notes:
 len(FULLcnt) = length of diversified region
 loop = (min region length, max region length)
 '''
-
 def UniqueFrequency(FULLseqs):
     FULLcnt = []
     for a in xrange(len(FULLseqs[0][0])):
         FULLcnt.append([0.]*22)
     for mem in FULLseqs:
         for j in xrange(len(FULLseqs[0][0])):
-            FULLcnt[j][ aa.index(mem[0][j])] += (mem[1])**(damp)
+            FULLcnt[j][ aa.index(mem[0][j])] += (mem[1])**damp
     return FULLcnt
 
 
@@ -183,7 +191,6 @@ Output Structure: 22x22 matrix for each position pair, i and j
     Pair sequence (i,j) ordering: i = {0:(len(protein) - 1)}, j = {(i+1):len(protein)}
 Note: 22 = 20AA + stop + gap
 '''
-
 def FullPairwise(seqs,pairBG,damp):
     
     allpair = []
@@ -327,7 +334,7 @@ def PublishData(FREQUENCYseqs,PERCENTseqs,LEADSseqs,UNIQUEseqs,LEADdistances,LEA
             plt.savefig(filename+'_Region-'+str(i+1)+'_'+curr_date+'.png', dpi=300)
             #plt.show()
             if i+1 == len(looplength):
-                print 'Summarizing figures have been stored within {0} for future reference.'.format(os.getcwd())
+                print('Summarizing figures have been stored within {0} for future reference.'.format(os.getcwd()))
         else:
             pass
         '''
@@ -840,7 +847,7 @@ Purpose: Start the application, choosing between silent and non-silent modes
 Note: You can change the default settings below if so desired
 '''
 
-if silentmode:
+if silent_mode:
     settings,job,divs = Silent_Load(job_file)
 
 else:
@@ -924,9 +931,8 @@ FULLPROT --> Stores list of all diversified regions originating from the same
     sequence, but only when all diversified regions are accounted for.
             
 '''
-
 while not os.path.isfile(files):
-    files = raw_input('\nError! \nSequence data file must exist within the current directory. \nPlease enter the sequence file name: \n')
+    files = input('\nError! \nSequence data file must exist within the current directory. \nPlease enter the sequence file name: \n')
         
 with open(files, 'r') as Mainfile:
     LOWlmt = len(''.join(FRAMEsplit)) + 3*(sum([i[0] for i in looplength]))
