@@ -2,7 +2,7 @@
 ScaffoldSeq: Software for characterization of directed evolution populations
 University of Minnesota
 __author__ = "Daniel R. Woldring, Patrick V. Holec, and Bejnamin J. Hackel"
-__version__ = 1.9
+__version__ = 2.0
 __status__ = "Research and Development"
 __maintainer__ = "Adam T. McConnell"
 """
@@ -85,30 +85,27 @@ def FullFormat(roughseqs,big_loop,spacer):
         allseqs.append(seq)
     return allseqs
 
-'''
-Sequence Analysis (Unique sequence frequency)
-Purpose: Counts the frequency of unique sequences in data
-Note: 
-'''
 
-
-def FullFreq(seqs):
+def full_freq(seqs):
+    """
+    Sequence Analysis (Unique sequence frequency). Counts the frequency of unique sequences in data
+    :param seqs:
+    :return:
+    """
     from collections import Counter
-    counter = Counter(seq)
-    return [[i,j] for i,j in zip(counter.keys(),counter.values())]
-
-
-'''
-Site-wise Amino Acid Counts within clustered data
-Purpose: Collects residue frequencies for the clustered data
-Notes:
-len(LOOPcnt) = length of diversified region
-loop = (min region length, max region length)
-'''
+    counter = Counter(seqs)
+    return [[i, j] for i, j in zip(counter.keys(), counter.values())]
 
 
 def ResidueFrequency(LOOPseqs, loop):
-    memCnt,LOOPcnt,LOOP_fams,LOOP_leads = [],[],0,[]
+    """
+    Site-wise Amino Acid Counts within clustered data. Collects residue frequencies for the clustered data
+    len(LOOPcnt) = length of diversified region
+    :param LOOPseqs:
+    :param loop: (min region length, max region length) tuple
+    :return:loop count and loop leads
+    """
+    memCnt, LOOPcnt, LOOP_fams, LOOP_leads = [], [], 0, []
     for a in range(loop[1]):
         LOOPcnt.append([0.]*22)
     for i in range(loop[1]-loop[0]+1):
@@ -135,8 +132,6 @@ Notes:
 len(FULLcnt) = length of diversified region
 loop = (min region length, max region length)
 '''
-
-
 def UniqueFrequency(FULLseqs):
     FULLcnt = []
     for a in range(len(FULLseqs[0][0])):
@@ -453,13 +448,13 @@ def LoadJobs():
         print(' ' * 70 + 'Set', str(ii + 1), 'of', str(len(DefaultJobs)))
         print('\n' * 10 + 'Saved Files:'.center(cc))
         for i in range(len(JobMenu)):
-            print (JobMenu[i]+'       '+str(DefaultJobs[ii][i]).center(30)+'   ').center(cc)
+            print((JobMenu[i]+'       '+str(DefaultJobs[ii][i]).center(30)+'   ').center(cc))
         print('')
         for i in range(len(OptionsMenu)):
             if i == ss:
-                print ('>  '+OptionsMenu[i].center(10)+'  <').center(cc)
+                print(('>  '+OptionsMenu[i].center(10)+'  <').center(cc))
             else:
-                print ('   '+OptionsMenu[i].center(10)+'   ').center(cc)
+                print(('   '+OptionsMenu[i].center(10)+'   ').center(cc))
         print('\n' * 10)
         key = __getch()
         if key == 'Up':
@@ -477,7 +472,7 @@ def LoadJobs():
                 print('Are you sure?'.center(cc) + '\n' + 'Press escape to abort...'.center(cc))
                 __getch()
                 del DefaultJobs[ii]
-                saved = open( "SavedJobs.p", "wb" )
+                saved = open("SavedJobs.p", "wb")
                 pickle.dump(DefaultJobs, saved)
                 saved.close()
                 print('Deleted job template.')
@@ -488,31 +483,33 @@ def LoadJobs():
             elif ss == 2:
                 return False, False
 
-'''
-Interface Menu (Keypress Recording)
-Purpose: Logs keypress without using input functions for quicker, smoother experience
-Note: Interprets arrowkeys as well! Should be able to handle Windows, Mac, and Linux system
-'''
+
 def __getch():
+    """
+    Interface Menu (Keypress Recording)
+    Purpose: Logs keypress without using input functions for quicker, smoother experience
+    Note: Interprets arrowkeys as well! Should be able to handle Windows, Mac, and Linux system
+    :return:
+    """
     if system_name == 'Windows':
         from msvcrt import getch
         while True:
             key = ord(getch())
-            if key == 27: #ESC
+            if key == 27:  # ESC
                 raise SystemExit
-            elif key == 13: #Enter
+            elif key == 13:  # Enter
                 return 'Enter'
             elif key == 8:
                 return 'Delete'
-            elif key == 224: #Special keys (arrows, f keys, ins, del, etc.)
+            elif key == 224:  # Special keys (arrows, f keys, ins, del, etc.)
                 key = ord(getch())
-                if key == 80: #Down arrow
+                if key == 80:  # Down arrow
                     return 'Down'
-                elif key == 72: #Up arrow
+                elif key == 72:  # Up arrow
                     return 'Up'
-                elif key == 77: #Right arrow
+                elif key == 77:  # Right arrow
                     return 'Right'
-                elif key == 75: #Left arrow
+                elif key == 75:  # Left arrow
                     return 'Left'
             else:
                 return chr(key)
@@ -544,13 +541,14 @@ def __getch():
             return ch
 
 
-'''
-Interface Menu (Main Menu)
-Purpose: First menu to operate the algorithm, branches to Load Jobs, Settings, and Start Job
-Note:
-'''
-def Main(settings):
-    MainOptions = ['Start Job','Load  Job','Settings','Information','Exit']
+def main(settings):
+    """
+    Interface Menu (Main Menu)
+    Purpose: First menu to operate the algorithm, branches to Load Jobs, Settings, and Start Job
+    :param settings:
+    :return:
+    """
+    main_options = ['Start Job', 'Load  Job', 'Settings', 'Information', 'Exit']
     clear()
     cc = 79
     print('\n' * 4)
@@ -561,7 +559,7 @@ def Main(settings):
     print('##                          Hackel Lab                          ##'.center(cc))
     print('##                    University of Minnesota                   ##'.center(cc))
     print('##                                                              ##'.center(cc))
-    print('##                          Version 1.9                         ##'.center(cc))
+    print('##                          Version 2.0                         ##'.center(cc))
     print('##                    Last Updated: 2/16/2016                   ##'.center(cc))
     print('##                   Woldring - Holec - Hackel                  ##'.center(cc))
     print('##                                                              ##'.center(cc))
@@ -572,38 +570,38 @@ def Main(settings):
     __getch()
     clear()
 
-    cc,ss = 79,0
+    cc, ss = 79, 0
     while True:
         clear()
         print('\n' * 5 + '-- Main Menu --'.center(cc) + '\n')
-        for i in range(len(MainOptions)):
+        for i in range(len(main_options)):
             if i == ss:
-                print ('>  '+MainOptions[i]+'  <').center(cc)
+                print('>  ' + main_options[i] + '  <'.center(cc))
             else:
-                print(MainOptions[i].center(cc))
+                print(main_options[i].center(cc))
         print('\n' * 9)
         key = __getch()
         if key == 'Up':
-            ss = (ss-1)%len(MainOptions)
+            ss = (ss-1) % len(main_options)
         elif key == 'Down':
-            ss = (ss+1)%len(MainOptions)
+            ss = (ss+1) % len(main_options)
         elif key == 'Enter':
             if ss == 0:
                 while True:
-                    job,divs = ModifyJob()
+                    job, divs = ModifyJob()
                     if job:
                         break
                 if divs:
-                    return job,divs,settings
+                    return job, divs, settings
             if ss == 1:
-                job,divs = LoadJobs()
-                if job != False:
+                job, divs = LoadJobs()
+                if job:
                     while True:
-                        job,divs = ModifyJob(job,divs)
+                        job, divs = ModifyJob(job, divs)
                         if job:
                             break
                     if divs:
-                        return job,divs,settings
+                        return job, divs, settings
             elif ss == 2:
                 settings = MainSettings(settings)
             elif ss == 3:
@@ -618,23 +616,26 @@ def Main(settings):
             elif ss == 4:
                 raise SystemExit
 
-'''
-Interface Menu (Start Job)
-Purpose: Allow a user to modify job, whether it is generated from scratch or an existing template
 
-Variable Structure Notes:
-job = ["" for x in xrange(len(JobMenu)-1)]+[2]    --> ['', '', '', '', '', 2]
-divs = [['',4,6,2] for j in xrange(8)]  
+def ModifyJob(job='', divs=''):
+    """
+    Interface Menu (Start Job)
+    Purpose: Allow a user to modify job, whether it is generated from scratch or an existing template
 
-'''
-def ModifyJob(job='',divs=''):
-    cc,ss,rs = 79,0,0
-    JobMenu = ['Job Name','FASTA/FASTQ File','Gene Start',"5' Anchor","3' Anchor",'# of Diversified Regions']
-    RegionMenu = ['DNA After Region','Minimum Region Length','Maximum Region Length','Insert after # Position']
-    OptionsMenu = ['Accept','Save','Cancel']
+    Variable Structure Notes:
+    job = ["" for x in xrange(len(JobMenu)-1)]+[2]    --> ['', '', '', '', '', 2]
+    divs = [['',4,6,2] for j in xrange(8)]
+    :param job:
+    :param divs:
+    :return:
+    """
+    cc, ss, rs = 79, 0, 0
+    JobMenu = ['Job Name', 'FASTA/FASTQ File', 'Gene Start', "5' Anchor", "3' Anchor", '# of Diversified Regions']
+    RegionMenu = ['DNA After Region', 'Minimum Region Length', 'Maximum Region Length', 'Insert after # Position']
+    OptionsMenu = ['Accept', 'Save', 'Cancel']
     if not job:
         job = ["" for x in range(len(JobMenu)-1)]+[2]
-        divs = [['',4,6,2] for j in range(8)]
+        divs = [['', 4, 6, 2] for j in range(8)]
     limit = len(JobMenu)+len(RegionMenu)+len(OptionsMenu) + 1
     while True:
         clear()
@@ -646,44 +647,46 @@ def ModifyJob(job='',divs=''):
 
         for i in range(len(JobMenu)):
             if i == ss:
-                print (JobMenu[i]+' >'+str(job[i]).center(30)+'< ').center(cc)
+                print(JobMenu[i]+' >'+str(job[i]).center(30)+'< '.center(cc))
             else:
-                print (JobMenu[i]+'  '+str(job[i]).center(30)+'  ').center(cc)
+                print(JobMenu[i]+'  '+str(job[i]).center(30)+'  '.center(cc))
         print('')
         if ss == len(JobMenu):
-            print ((' >'+'<Region '+str(rs+1)+'>'+'< ').center(20)).center(cc)
+            print((' >'+'<Region '+str(rs+1)+'>'+'< ').center(20).center(cc))
         else:
-            print (('  '+'<Region '+str(rs+1)+'>'+'  ').center(20)).center(cc)
+            print(('  '+'<Region '+str(rs+1)+'>'+'  ').center(20).center(cc))
 
         for i in range(len(RegionMenu)):
             if i+len(JobMenu)+1 == ss:
-                print (RegionMenu[i]+' >'+str(divs[rs][i]).center(30)+'< ').center(cc)
+                print(RegionMenu[i]+' >'+str(divs[rs][i]).center(30)+'< '.center(cc))
             else:
-                print (RegionMenu[i]+'  '+str(divs[rs][i]).center(30)+'  ').center(cc)
+                print(RegionMenu[i]+'  '+str(divs[rs][i]).center(30)+'  '.center(cc))
         print('')
         for i in range(len(OptionsMenu)):
             if i+len(JobMenu)+len(RegionMenu)+1 == ss:
-                print ('>  '+OptionsMenu[i].center(30)+'  <').center(cc)
+                print('>  '+OptionsMenu[i].center(30)+'  <'.center(cc))
             else:
-                print ('   '+OptionsMenu[i].center(30)+'   ').center(cc)
+                print('   '+OptionsMenu[i].center(30)+'   '.center(cc))
         print('\n' + 'Translated Gene of Interest:'.center(cc))
         print(construct.center(cc) + '\n')
         print('? = undeclared  - = diversified  + = loop length  ! = translation error'.center(cc))
 
         key = __getch()
         if key == 'Up':
-            ss = (ss-1)%limit
+            ss = (ss-1) % limit
         elif key == 'Down':
-            ss = (ss+1)%limit
+            ss = (ss+1) % limit
         elif key == 'Enter':
             if ss == limit-3:
                 try:
                     if construct.count('!') + construct.count('?') != 0: raise SystemError
-                    if job[3].count('A') + job[3].count('T') + job[3].count('C') + job[3].count('G') != len(job[3]): raise SystemError
-                    if job[4].count('A') + job[4].count('T') + job[4].count('C') + job[4].count('G') != len(job[4]): raise SystemError
+                    if job[3].count('A') + job[3].count('T') + job[3].count('C') + job[3].count('G') != len(job[3]):
+                        raise SystemError
+                    if job[4].count('A') + job[4].count('T') + job[4].count('C') + job[4].count('G') != len(job[4]):
+                        raise SystemError
                     print('Press any key to start job...'.center(cc) + '\n' + 'Esc to abort'.center(cc))
                     __getch()
-                    return job,divs
+                    return job, divs
                 except:
                     print('\n' * 30)
                     print('Invalid entry in settings'.center(cc) + '\n' + 'Be sure anchors are properly defined'.center(
@@ -692,7 +695,7 @@ def ModifyJob(job='',divs=''):
                     __getch()
             elif ss == limit-2:
                 try:
-                    saved = open( "SavedJobs.p", "rb" )
+                    saved = open("SavedJobs.p", "rb")
                     DefaultJobs = pickle.load(saved)
                     saved.close()
                 except:
@@ -701,11 +704,11 @@ def ModifyJob(job='',divs=''):
                     DefaultJobs.append(['Fibronectin_Fn3HP','High_affinity.fasta','TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG','GCTAGC','GGATCC',3,[['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG',6,10,3],['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA',3,7,1],['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG',6,12,3]]+[['',4,6,2] for j in range(5)]])
                     DefaultJobs.append(['Gene-2-Protein_Gp2', 'Gp2_evolved_binders.fasta', 'AAATTTTGGGCGACTGTA', 'GCTAGC', 'GGATCC', 2, [['TTCGAGGTTCCGGTTTATGCTGAAACCCTGGACGAAGCACTGGAACTGGCCGAATGGCAGTAC', 6, 8, 6], ['GTGACCCGCGTGCGTCCG', 6, 8, 6], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
                     DefaultJobs.append(['Knottin', '', 'GGCCAGTCTGGCCAGGGCACCTGCAACACCCCGGGCTGCACCTGCAGCTGGCCGGTGTGC', 'TGACTAGCAATGCTGACTGA', 'TCTGGTGACTACAACAAAAAC', 1, [['TGCGGCGAAACCTGCGTGGGCGGAGGGCAGTCTGGGCAG', 7, 7, 0], ['', 4, 6, 2], ['',4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
-                    saved = open( "SavedJobs.p", "wb" )
+                    saved = open("SavedJobs.p", "wb")
                     pickle.dump(DefaultJobs, saved)
                     saved.close()
                 DefaultJobs.append(job+[divs])
-                saved = open( "SavedJobs.p", "wb" )
+                saved = open("SavedJobs.p", "wb")
                 pickle.dump(DefaultJobs, saved)
                 saved.close()
                 print('\n' * 10 + 'Saved!'.center(cc) + '\n' * 18)
@@ -715,12 +718,12 @@ def ModifyJob(job='',divs=''):
         elif ss == 5:
             clear()
             if key == 'Left':
-                job[5] = (job[5]-2)%8 + 1
+                job[5] = (job[5]-2) % 8 + 1
             if key == 'Right':
-                job[5] = (job[5])%8 + 1
+                job[5] = (job[5]) % 8 + 1
         elif ss == 6:
             if key == 'Left':
-                rs = (rs-1)%job[5]
+                rs = (rs-1) % job[5]
             if key == 'Right':
                 rs = (rs+1)%job[5]
         elif ss == 8:
@@ -741,48 +744,49 @@ def ModifyJob(job='',divs=''):
             if key == 'Delete': divs[rs][ss-len(JobMenu)-1] = divs[rs][ss-len(JobMenu)-1][:-1]
             else: divs[rs][ss-len(JobMenu)-1] += key
 
-'''
-Interface Menu (Settings Menu)
-Purpose: Allows user to modify the behind the scenes settings for the analysis
-Note:
-'''
 
 def MainSettings(settings):
-        SettingsMenu = ["Sequence Similarity Threshold","Frequency Dampening Power","Maximum Sequence Count","Assay Background Filter","Pairwise Analysis",["Filter Coefficient","Hard Cap Filter"],""]
-        cc,ss,limit,switch,pairwise_analysis = 79,0,len(SettingsMenu),['On','Off'],['On','Off']
-        while True:
-            clear()
-            print('\n' * 2)
-            print('-- System Settings --'.center(cc) + '\n')
-            for i in range(len(SettingsMenu)):
-                if i == 5: display = SettingsMenu[i][switch.index(settings[3])]
-                else: display = SettingsMenu[i]
-                if i == ss: print (display+'    >  '+settings[i]+'  <').center(cc)
-                else: print (display+'       '+settings[i]+'   ').center(cc)
-            print('\n' * 10)
-            key = __getch()
-            if key == 'Up':
-                ss = (ss-1)%len(SettingsMenu)
-            elif key == 'Down':
-                ss = (ss+1)%len(SettingsMenu)
-            elif key == 'Left':
-                if ss == 3: settings[3] = switch[1-switch.index(settings[3])]
-                if ss == 4: settings[4] = pairwise_analysis[1-pairwise_analysis.index(settings[4])]
-            elif key == 'Right':
-                if ss == 3: settings[3] = switch[1-switch.index(settings[3])]
-                if ss == 4: settings[4] = pairwise_analysis[1-pairwise_analysis.index(settings[4])]
-            elif ss != limit-3 and ss != limit-1:
-                if key == 'Delete': settings[ss] = settings[ss][:-1]
-                else: settings[ss] += key
-            elif key == 'Enter' and ss == len(SettingsMenu)-1:
-                try:
-                    [float(i) for i in settings[0:3]+[settings[5]]]
-                    return settings
-                except:
-                    print('\n' * 30)
-                    print('Invalid entry in settings'.center(cc) + '\n' + 'Be sure all values are numbers'.center(cc))
-                    print('\n' * 19)
-                    __getch()
+    """
+    Interface Menu (Settings Menu)
+    Purpose: Allows user to modify the behind the scenes settings for the analysis
+    :param settings:
+    :return:
+    """
+    SettingsMenu = ["Sequence Similarity Threshold","Frequency Dampening Power","Maximum Sequence Count","Assay Background Filter","Pairwise Analysis",["Filter Coefficient","Hard Cap Filter"],""]
+    cc,ss,limit,switch,pairwise_analysis = 79,0,len(SettingsMenu),['On','Off'],['On','Off']
+    while True:
+        clear()
+        print('\n' * 2)
+        print('-- System Settings --'.center(cc) + '\n')
+        for i in range(len(SettingsMenu)):
+            if i == 5: display = SettingsMenu[i][switch.index(settings[3])]
+            else: display = SettingsMenu[i]
+            if i == ss: print (display+'    >  '+settings[i]+'  <').center(cc)
+            else: print (display+'       '+settings[i]+'   ').center(cc)
+        print('\n' * 10)
+        key = __getch()
+        if key == 'Up':
+            ss = (ss-1)%len(SettingsMenu)
+        elif key == 'Down':
+            ss = (ss+1)%len(SettingsMenu)
+        elif key == 'Left':
+            if ss == 3: settings[3] = switch[1-switch.index(settings[3])]
+            if ss == 4: settings[4] = pairwise_analysis[1-pairwise_analysis.index(settings[4])]
+        elif key == 'Right':
+            if ss == 3: settings[3] = switch[1-switch.index(settings[3])]
+            if ss == 4: settings[4] = pairwise_analysis[1-pairwise_analysis.index(settings[4])]
+        elif ss != limit-3 and ss != limit-1:
+            if key == 'Delete': settings[ss] = settings[ss][:-1]
+            else: settings[ss] += key
+        elif key == 'Enter' and ss == len(SettingsMenu)-1:
+            try:
+                [float(i) for i in settings[0:3]+[settings[5]]]
+                return settings
+            except:
+                print('\n' * 30)
+                print('Invalid entry in settings'.center(cc) + '\n' + 'Be sure all values are numbers'.center(cc))
+                print('\n' * 19)
+                __getch()
 
 def Silent_Load(fname):
     text = open(fname, 'r')
@@ -790,7 +794,7 @@ def Silent_Load(fname):
     JobMenu = ['Job Name','FASTA/FASTQ File','Gene Start',"5' Anchor","3' Anchor",'# of Diversified Regions']
     RegionMenu = ['DNA After Region','Minimum Region Length','Maximum Region Length','Insert after # Position']
     SettingMenu = ["Sequence Similarity Threshold","Frequency Dampening Power","Maximum Sequence Count","Assay Background Filter","Pairwise Analysis","Filter Coefficient","Hard Cap Filter"]
-    Jobs,Regions,Settings = ['' for i in range(len(JobMenu))],['' for i in range(len(RegionMenu))],['' for i in range(len(SettingMenu))]
+    Jobs, Regions, Settings = ['' for i in range(len(JobMenu))],['' for i in range(len(RegionMenu))],['' for i in range(len(SettingMenu))]
     for i in range(len(JobMenu)):
         for line in lines:
             if JobMenu[i] in line:
@@ -812,11 +816,13 @@ def Silent_Load(fname):
 ###   Start of Execution   ###
 ##############################
 
+
 '''
 Silent Start Detector
 Purpose: If a command line argument is provided, the program will run in silence
 Notes:
 '''
+silent_mode = False
 if len(sys.argv) == 1:
     silent_mode = False
 elif len(sys.argv) == 2:  # Triggers Interface Mode
@@ -843,19 +849,19 @@ Note: You can change the default settings below if so desired
 '''
 
 if silent_mode:
-    settings,job,divs = Silent_Load(job_file)
+    settings, job, divs = Silent_Load(job_file)
 
 else:
     clear()
-    settings = ['.8','0.5','10000','On','On','10','Return to Main Menu    ']
-    job,divs,settings = Main(settings)
+    settings = ['.8', '0.5', '10000', 'On', 'On', '10', 'Return to Main Menu    ']
+    job, divs, settings = main(settings)
 
 [thresh, damp, maxSeqCount, use_bck, pairwise, bead_ratio] = settings[0:6]
 [thresh, damp, maxSeqCount, use_bck, pairwise, bead_ratio] = [float(thresh), float(damp), int(maxSeqCount), use_bck, pairwise, float(bead_ratio)]
-[filename,files],FRAMEsplit = job[0:2],[]
+[filename,files],FRAMEsplit = job[0:2], []
 adaptors = job [3:5]
 FRAMEsplit.append(job[2])
-looplength,diversityspacing = [],[]
+looplength,diversityspacing = [], []
 for i in range(job[5]):
     looplength.append(divs[i][1:3])
     diversityspacing.append(divs[i][3])
@@ -949,8 +955,8 @@ with open(files, 'r') as Mainfile:
             Purpose: Goes through each matching sequence at tries to align sections of framework in order to identify diversified regions
             Note:
             '''
-            for (i,loop) in zip(range(len(looplength)),looplength):
-                protFrag,protFragRat,protFragaa = [],[],[]
+            for (i, loop) in zip(range(len(looplength)),looplength):
+                protFrag, protFragRat, protFragaa = [], [], []
 
                 LOOPstart += len(FRAMEsplit[i])+loop[0]*3
 
@@ -1144,8 +1150,8 @@ for LOOPseqs,loop,space in zip(UNIQUELOOPseqs,looplength,diversityspacing):
 # C_seqs = [d for a in CLUSTERseqs for b in a for c in b for d in c]
 
 
-uniquetime = time.time() - time3
-print('Family Clusters Identified in %.2f sec' % (uniquetime))
+unique_time = time.time() - time3
+print('Family Clusters Identified in %.2f sec' % unique_time)
 time3b = time.time()
 
 
@@ -1181,7 +1187,7 @@ if pairwise == 'On':
     seq = FullFormat(FULLPROT,looplength,diversityspacing)
 
     # Counts and stores all unique protein sequences in single list --> [[seq0, 0#],[seq1, 1#]...]
-    seq = FullFreq(seq)
+    seq = full_freq(seq)
 
     print('Analyzing Pairwise Interactions Within %.i Unique Proteins ' % len(seq))
 
