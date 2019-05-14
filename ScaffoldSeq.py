@@ -16,7 +16,6 @@ import pandas as pd
 
 # TODO: clean up documentation
 # TODO: clean up docstrings
-# TODO: separate out GUI from algorithm
 # TODO: rewrite algorithm in the form of a class?
 # TODO: profile code for performance evaluation
 # TODO: if this is to be scalable, will need to use generators rather than returning lists
