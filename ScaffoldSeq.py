@@ -369,11 +369,12 @@ def hist_export(prob, sample_id):
 def Adaptor_Alignment(seq, adaptors):
     """
     Sequence Acquisition (Adaptor Alignment)
-    Purpose: This function allows you to check for where the adaptors match the sequence, and output the identified sequence/length
+    Purpose: This function allows you to check for where the adaptors match the sequence, and output the identified
+        sequence/length
     Note: You can change tolerance by modifying global variable "adaptor_tolerance"
     :param seq:
     :param adaptors:
-    :return:
+    :return: sequence length, protein
     """
     # global adaptor_tolerance
     if adaptor_tolerance == 0:
@@ -400,20 +401,23 @@ def Adaptor_Alignment(seq, adaptors):
         return length, protein
 
 
+"""
 # DRW edit 1-25-2016
-##def add_gap(loop_list,big_loop,depth):
-##    for i in xrange(len(loop_list)):
-##        for fam in xrange(len(loop_list[i])):
-##            for seq in loop_list[i][fam]:
-##                a = 0
-##                try:
-##                    a += 1
-##                    seq[0] = seq[0][:depth + 1] \
-##                    + '-' * (big_loop - len(seq[0])) \
-##                    + seq[0][depth + 1:]
-##                except IndexError:
-##                    pass
-##    return loop_list
+def add_gap(loop_list,big_loop,depth):
+    for i in xrange(len(loop_list)):
+        for fam in xrange(len(loop_list[i])):
+            for seq in loop_list[i][fam]:
+                a = 0
+                try:
+                    a += 1
+                    seq[0] = seq[0][:depth + 1] \
+                    + '-' * (big_loop - len(seq[0])) \
+                    + seq[0][depth + 1:]
+                except IndexError:
+                    pass
+    return loop_list
+"""
+
 
 def add_gap(loop_list, big_loop, depth):
     for i in range(len(loop_list)):
