@@ -81,27 +81,28 @@ def LoadJobs():
         DefaultJobs = [['Affibody_ABY025', '', 'GCCGAAGCGAAATAC', 'GCTAGC', 'GGATCC', 2,
                         [['CTGCCGAACCTGACC', 13, 13, 2],
                          ['GACCCGTCCCAGAGCTCTGAACTCCTGTCTGAGGCGAAGAAACTGAACGATTCCCAAGCACCAAAA', 13, 13, 2],
-                         ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]]]
-        DefaultJobs.append(['DARPin', '', 'GACGTTAACGCT', 'GGATCC', 'AAGCTT', 2, [['ACTCCGCTGCACCTGGCTGCT', 6, 6, 0], [
-            'GGTCACCTGGAAATCGTTGAAGTTCTGCTGAAGTACGGTGCT', 2, 2, 0], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
-                                                                                  ['', 4, 6, 2], ['', 4, 6, 2],
-                                                                                  ['', 4, 6, 2]]])
-        DefaultJobs.append(['Fibronectin_Fn3HP', 'High_affinity.fasta',
-                            'TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG', 'GCTAGC', 'GGATCC', 3,
-                            [['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG', 6, 10, 3],
-                             ['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA', 3, 7, 1],
-                             ['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG', 6, 12, 3]] + [['', 4, 6, 2] for j in
-                                                                                             range(5)]])
-        DefaultJobs.append(
-            ['Gene-2-Protein_Gp2', 'Gp2_evolved_binders.fasta', 'AAATTTTGGGCGACTGTA', 'GCTAGC', 'GGATCC', 2,
-             [['TTCGAGGTTCCGGTTTATGCTGAAACCCTGGACGAAGCACTGGAACTGGCCGAATGGCAGTAC', 6, 8, 6],
-              ['GTGACCCGCGTGCGTCCG', 6, 8, 6], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
-              ['', 4, 6, 2], ['', 4, 6, 2]]])
-        DefaultJobs.append(
-            ['Knottin', '', 'GGCCAGTCTGGCCAGGGCACCTGCAACACCCCGGGCTGCACCTGCAGCTGGCCGGTGTGC', 'TGACTAGCAATGCTGACTGA',
-             'TCTGGTGACTACAACAAAAAC', 1,
-             [['TGCGGCGAAACCTGCGTGGGCGGAGGGCAGTCTGGGCAG', 7, 7, 0], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
-              ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
+                         ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]],
+                       ['DARPin', '', 'GACGTTAACGCT', 'GGATCC', 'AAGCTT', 2, [['ACTCCGCTGCACCTGGCTGCT', 6, 6, 0], [
+                           'GGTCACCTGGAAATCGTTGAAGTTCTGCTGAAGTACGGTGCT', 2, 2, 0], ['', 4, 6, 2], ['', 4, 6, 2],
+                                                                              ['', 4, 6, 2],
+                                                                              ['', 4, 6, 2], ['', 4, 6, 2],
+                                                                              ['', 4, 6, 2]]],
+                       ['Fibronectin_Fn3HP', 'High_affinity.fasta',
+                        'TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG', 'GCTAGC', 'GGATCC', 3,
+                        [['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG', 6, 10, 3],
+                         ['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA', 3, 7, 1],
+                         ['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG', 6, 12, 3]] + [['', 4, 6, 2] for j in
+                                                                                         range(5)]],
+                       ['Gene-2-Protein_Gp2', 'Gp2_evolved_binders.fasta', 'AAATTTTGGGCGACTGTA', 'GCTAGC', 'GGATCC', 2,
+                        [['TTCGAGGTTCCGGTTTATGCTGAAACCCTGGACGAAGCACTGGAACTGGCCGAATGGCAGTAC', 6, 8, 6],
+                         ['GTGACCCGCGTGCGTCCG', 6, 8, 6], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
+                         ['', 4, 6, 2], ['', 4, 6, 2]]],
+                       ['Knottin', '', 'GGCCAGTCTGGCCAGGGCACCTGCAACACCCCGGGCTGCACCTGCAGCTGGCCGGTGTGC',
+                        'TGACTAGCAATGCTGACTGA',
+                        'TCTGGTGACTACAACAAAAAC', 1,
+                        [['TGCGGCGAAACCTGCGTGGGCGGAGGGCAGTCTGGGCAG', 7, 7, 0], ['', 4, 6, 2], ['', 4, 6, 2],
+                         ['', 4, 6, 2],
+                         ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]]]
 
         saved = open("SavedJobs.p", "wb")
         pickle.dump(DefaultJobs, saved)
@@ -377,29 +378,37 @@ def ModifyJob(job='', divs=''):
                                     [['CTGCCGAACCTGACC', 13, 13, 2],
                                      ['GACCCGTCCCAGAGCTCTGAACTCCTGTCTGAGGCGAAGAAACTGAACGATTCCCAAGCACCAAAA', 13, 13, 2],
                                      ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
+                                     ['', 4, 6, 2]]], ['DARPin', '', 'GACGTTAACGCT', 'GGATCC', 'AAGCTT', 2,
+                                                       [['ACTCCGCTGCACCTGGCTGCT', 6, 6, 0],
+                                                        ['GGTCACCTGGAAATCGTTGAAGTTCTGCTGAAGTACGGTGCT', 2, 2, 0],
+                                                        ['', 4, 6, 2],
+                                                        ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
+                                                        ['', 4, 6, 2]]], ['Fibronectin_Fn3HP', 'High_affinity.fasta',
+                                                                          'TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG',
+                                                                          'GCTAGC',
+                                                                          'GGATCC', 3,
+                                                                          [[
+                                                                               'TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG',
+                                                                               6, 10, 3],
+                                                                           [
+                                                                               'GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA',
+                                                                               3, 7, 1],
+                                                                           [
+                                                                               'CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG',
+                                                                               6, 12, 3]] + [['', 4, 6, 2]
+                                                                                             for j in
+                                                                                             range(5)]],
+                                   ['Gene-2-Protein_Gp2', 'Gp2_evolved_binders.fasta', 'AAATTTTGGGCGACTGTA', 'GCTAGC',
+                                    'GGATCC', 2,
+                                    [['TTCGAGGTTCCGGTTTATGCTGAAACCCTGGACGAAGCACTGGAACTGGCCGAATGGCAGTAC', 6, 8, 6],
+                                     ['GTGACCCGCGTGCGTCCG', 6, 8, 6], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
+                                     ['', 4, 6, 2],
+                                     ['', 4, 6, 2], ['', 4, 6, 2]]],
+                                   ['Knottin', '', 'GGCCAGTCTGGCCAGGGCACCTGCAACACCCCGGGCTGCACCTGCAGCTGGCCGGTGTGC',
+                                    'TGACTAGCAATGCTGACTGA', 'TCTGGTGACTACAACAAAAAC', 1,
+                                    [['TGCGGCGAAACCTGCGTGGGCGGAGGGCAGTCTGGGCAG', 7, 7, 0], ['', 4, 6, 2],
+                                     ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
                                      ['', 4, 6, 2]]]]
-                    DefaultJobs.append(['DARPin', '', 'GACGTTAACGCT', 'GGATCC', 'AAGCTT', 2,
-                                        [['ACTCCGCTGCACCTGGCTGCT', 6, 6, 0],
-                                         ['GGTCACCTGGAAATCGTTGAAGTTCTGCTGAAGTACGGTGCT', 2, 2, 0], ['', 4, 6, 2],
-                                         ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2]]])
-                    DefaultJobs.append(['Fibronectin_Fn3HP', 'High_affinity.fasta',
-                                        'TCCTCCGACTCTCCGCGTAACCTGGAGGTTACCAACGCAACTCCGAACTCTCTGACTATTTCTTGG', 'GCTAGC',
-                                        'GGATCC', 3,
-                                        [['TACCGTATCACCTACGGCGAAACTGGTGGTAACTCCCCGAGCCAGGAATTCACTGTTCCG', 6, 10, 3],
-                                         ['GCGACCATCAGCGGTCTGAAACCGGGCCAGGATTATACCATTACCGTGTACGCTGTA', 3, 7, 1],
-                                         ['CCAATCAGCATCAATTATCGCACCGAAATCGACAAACCGTCTCAG', 6, 12, 3]] + [['', 4, 6, 2]
-                                                                                                         for j in
-                                                                                                         range(5)]])
-                    DefaultJobs.append(
-                        ['Gene-2-Protein_Gp2', 'Gp2_evolved_binders.fasta', 'AAATTTTGGGCGACTGTA', 'GCTAGC', 'GGATCC', 2,
-                         [['TTCGAGGTTCCGGTTTATGCTGAAACCCTGGACGAAGCACTGGAACTGGCCGAATGGCAGTAC', 6, 8, 6],
-                          ['GTGACCCGCGTGCGTCCG', 6, 8, 6], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
-                          ['', 4, 6, 2], ['', 4, 6, 2]]])
-                    DefaultJobs.append(['Knottin', '', 'GGCCAGTCTGGCCAGGGCACCTGCAACACCCCGGGCTGCACCTGCAGCTGGCCGGTGTGC',
-                                        'TGACTAGCAATGCTGACTGA', 'TCTGGTGACTACAACAAAAAC', 1,
-                                        [['TGCGGCGAAACCTGCGTGGGCGGAGGGCAGTCTGGGCAG', 7, 7, 0], ['', 4, 6, 2],
-                                         ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2], ['', 4, 6, 2],
-                                         ['', 4, 6, 2]]])
                     saved = open("SavedJobs.p", "wb")
                     pickle.dump(DefaultJobs, saved)
                     saved.close()

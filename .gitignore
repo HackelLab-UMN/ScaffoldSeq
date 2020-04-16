@@ -1,3 +1,6 @@
 venv/**
 .idea/**
 __pycache__/**
+GFP_merge.fastq
+*.png
+*.csv

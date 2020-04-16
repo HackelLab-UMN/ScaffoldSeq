@@ -276,7 +276,7 @@ def PublishData(FREQUENCYseqs, PERCENTseqs, LEADSseqs, UNIQUEseqs, LEADdistances
         df_max = df_alt.drop(df_alt.index[[20, 21]]).max().max()
         df_min = df_alt.drop(df_alt.index[[20, 21]]).min().min()
         df = df_alt.drop(df_alt.index[[20, 21]])
-
+        """
         fig, ax = plt.subplots(figsize=(15, 10))
 
         ax.xaxis.tick_top()
@@ -297,7 +297,7 @@ def PublishData(FREQUENCYseqs, PERCENTseqs, LEADSseqs, UNIQUEseqs, LEADdistances
         plt.colorbar()
         plt.show()
         plt.savefig(filename + '_Region-' + str(i + 1) + '_' + curr_date + '.png')
-
+        """
         if i + 1 == len(looplength):
             print('Summarizing figures have been stored within {0} for future reference.'.format(os.getcwd()))
 

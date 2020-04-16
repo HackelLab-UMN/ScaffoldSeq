@@ -25,7 +25,7 @@ elif len(sys.argv) == 2:  # Triggers Interface Mode
     else:
         print('Job file dictated by command line argument not located. Please check file name.')
         getch()
-elif len(sys.argv) > 2:
+elif len(sys.argv) > 5:
     print('Too many input arguments. Please revise command line arguments.')
     print('Press any key to exit.')
     input()
